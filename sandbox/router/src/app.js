@@ -14,6 +14,7 @@ app.get('/api/status/readyz', (req, res) => {
 });
 
 const proxies = {}
+const agentProxies = {}
 
 function getProxy(sandboxId){
     const target = `http://sandbox-service-${sandboxId}`; // Kubernetes service URL
@@ -26,12 +27,28 @@ function getProxy(sandboxId){
     }
     return proxies[sandboxId];
 }
+function getAgentProxy(sandboxId){
+    const target = `http://sandbox-service-${sandboxId}:3000`; // Kubernetes service URL
+    if (!agentProxies[sandboxId]) {
+        agentProxies[sandboxId] = createProxyMiddleware({ //cache the proxy for each sandboxId
+            target,
+            changeOrigin: true,
+            ws: true
+        });
+    }
+    return agentProxies[sandboxId];
+}
 
 app.use((req,res,next) => {
     const host = req.headers.host;
     const sandboxId = host.split('.')[0]; // Extract sandboxId from subdomain
+    if(host.split('.')[1] === 'agent'){
+        return getAgentProxy(sandboxId)(req, res, next)
+    }
+    else if(host.split('.')[1] === 'preview'){
+        return getProxy(sandboxId)(req, res, next)
+    }
 
-    return getProxy(sandboxId)(req, res, next)
 });
 
 export default app;
