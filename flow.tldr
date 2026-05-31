@@ -122,8 +122,8 @@
 			"typeName": "shape"
 		},
 		{
-			"x": 1923.1685090314938,
-			"y": -1236.7140903401303,
+			"x": 1919.692648966716,
+			"y": -1231.5003400207213,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -913,9 +913,9 @@
 			"typeName": "shape"
 		},
 		{
-			"x": -1922.6414466628116,
-			"y": 1696.2407841319325,
-			"z": 0.5347424968211708,
+			"x": -986.20277670147,
+			"y": 1773.2732591174838,
+			"z": 0.38360103140242147,
 			"meta": {},
 			"id": "camera:page:page",
 			"typeName": "camera"
@@ -1803,9 +1803,10 @@
 			"editingShapeId": null,
 			"croppingShapeId": null,
 			"selectedShapeIds": [
-				"shape:GJTsmnfun_PyEssO1AD0r"
+				"shape:9uFvZK-XkeaDSiivRzv2F",
+				"shape:tx5h3t_D3MkvZoTdT38ph"
 			],
-			"hoveredShapeId": "shape:GJTsmnfun_PyEssO1AD0r",
+			"hoveredShapeId": null,
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -2376,8 +2377,8 @@
 			"typeName": "binding"
 		},
 		{
-			"x": 2442.6450320777626,
-			"y": -1217.4648449036401,
+			"x": 2480.773338199345,
+			"y": -1334.3046528491466,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -2387,11 +2388,11 @@
 			"props": {
 				"color": "black",
 				"size": "l",
-				"w": 289.5833435058594,
+				"w": 234.98944633975339,
 				"font": "draw",
 				"textAlign": "start",
 				"autoSize": true,
-				"scale": 1,
+				"scale": 0.7366680641744414,
 				"richText": {
 					"type": "doc",
 					"attrs": {
@@ -2406,7 +2407,7 @@
 							"content": [
 								{
 									"type": "text",
-									"text": "Vite Dev Server"
+									"text": "[Vite Dev Server]"
 								}
 							]
 						}
@@ -3025,8 +3026,8 @@
 			"typeName": "shape"
 		},
 		{
-			"x": 1887.0929121552267,
-			"y": -1253.205774244118,
+			"x": 1883.6170520904489,
+			"y": -1247.992023924709,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -5030,9 +5031,21 @@
 				"verticalAlign": "middle",
 				"richText": {
 					"type": "doc",
+					"attrs": {
+						"dir": "auto"
+					},
 					"content": [
 						{
-							"type": "paragraph"
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "Port:5173"
+								}
+							]
 						}
 					]
 				}
@@ -5098,7 +5111,7 @@
 			"brush": null,
 			"scribbles": [],
 			"cursor": {
-				"type": "default",
+				"type": "move",
 				"rotation": 0
 			},
 			"isFocusMode": false,
