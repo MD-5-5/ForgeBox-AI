@@ -249,7 +249,7 @@
 		},
 		{
 			"x": 2257.6938200271943,
-			"y": -892.2067629736554,
+			"y": -880.9864091853038,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -913,9 +913,9 @@
 			"typeName": "shape"
 		},
 		{
-			"x": -1634.996229450631,
-			"y": 2100.2614090435536,
-			"z": 0.4190712012804192,
+			"x": -1922.6414466628116,
+			"y": 1696.2407841319325,
+			"z": 0.5347424968211708,
 			"meta": {},
 			"id": "camera:page:page",
 			"typeName": "camera"
@@ -1342,6 +1342,48 @@
 			"typeName": "shape"
 		},
 		{
+			"x": 2484.90582303365,
+			"y": -869.6746646536967,
+			"rotation": 0,
+			"isLocked": false,
+			"opacity": 1,
+			"meta": {},
+			"id": "shape:GJTsmnfun_PyEssO1AD0r",
+			"type": "text",
+			"props": {
+				"color": "black",
+				"size": "m",
+				"w": 190.53125,
+				"font": "draw",
+				"textAlign": "start",
+				"autoSize": true,
+				"scale": 1.1154505765405391,
+				"richText": {
+					"type": "doc",
+					"attrs": {
+						"dir": "auto"
+					},
+					"content": [
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "[agent/sidecar]"
+								}
+							]
+						}
+					]
+				}
+			},
+			"parentId": "page:page",
+			"index": "b0iJAdvVV",
+			"typeName": "shape"
+		},
+		{
 			"x": 2274.24784985762,
 			"y": -723.8669437580173,
 			"rotation": 0,
@@ -1761,9 +1803,9 @@
 			"editingShapeId": null,
 			"croppingShapeId": null,
 			"selectedShapeIds": [
-				"shape:O0LrJgp68zktU08wxDzHa"
+				"shape:GJTsmnfun_PyEssO1AD0r"
 			],
-			"hoveredShapeId": null,
+			"hoveredShapeId": "shape:GJTsmnfun_PyEssO1AD0r",
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -3824,8 +3866,8 @@
 			"typeName": "shape"
 		},
 		{
-			"x": 2257.6938200271943,
-			"y": -1371.5085391959387,
+			"x": 2251.4603281912237,
+			"y": -1351.5612483280086,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -5052,13 +5094,7 @@
 		{
 			"followingUserId": null,
 			"opacityForNextShape": 1,
-			"stylesForNextShape": {
-				"tldraw:geo": "rectangle",
-				"tldraw:dash": "draw",
-				"tldraw:size": "xl",
-				"tldraw:color": "red",
-				"tldraw:arrowKind": "elbow"
-			},
+			"stylesForNextShape": {},
 			"brush": null,
 			"scribbles": [],
 			"cursor": {
@@ -5090,9 +5126,9 @@
 			"isFocused": true,
 			"devicePixelRatio": 1.5,
 			"isCoarsePointer": false,
-			"isHoveringCanvas": false,
+			"isHoveringCanvas": true,
 			"openMenus": [],
-			"isChangingStyle": true,
+			"isChangingStyle": false,
 			"isReadonly": false,
 			"meta": {},
 			"duplicateProps": null,
