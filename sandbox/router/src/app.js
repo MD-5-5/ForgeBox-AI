@@ -1,4 +1,5 @@
 import express from "express";
+import http from "http";                          
 import { createProxyMiddleware } from "http-proxy-middleware";
 import morgan from "morgan";
 
@@ -13,13 +14,13 @@ app.get('/api/status/readyz', (req, res) => {
     res.status(200).json({ message: 'Router server is ready', status: 'ready' });
 });
 
-const proxies = {}
-const agentProxies = {}
+const proxies = {};
+const agentProxies = {};
 
-function getProxy(sandboxId){
-    const target = `http://sandbox-service-${sandboxId}`; // Kubernetes service URL
+function getProxy(sandboxId) {
+    const target = `http://sandbox-service-${sandboxId}`;
     if (!proxies[sandboxId]) {
-        proxies[sandboxId] = createProxyMiddleware({ //cache the proxy for each sandboxId
+        proxies[sandboxId] = createProxyMiddleware({
             target,
             changeOrigin: true,
             ws: true
@@ -27,10 +28,11 @@ function getProxy(sandboxId){
     }
     return proxies[sandboxId];
 }
-function getAgentProxy(sandboxId){
-    const target = `http://sandbox-service-${sandboxId}:3000`; // Kubernetes service URL
+
+function getAgentProxy(sandboxId) {
+    const target = `http://sandbox-service-${sandboxId}:3000`;
     if (!agentProxies[sandboxId]) {
-        agentProxies[sandboxId] = createProxyMiddleware({ //cache the proxy for each sandboxId
+        agentProxies[sandboxId] = createProxyMiddleware({
             target,
             changeOrigin: true,
             ws: true
@@ -39,16 +41,34 @@ function getAgentProxy(sandboxId){
     return agentProxies[sandboxId];
 }
 
-app.use((req,res,next) => {
+app.use((req, res, next) => {
     const host = req.headers.host;
-    const sandboxId = host.split('.')[0]; // Extract sandboxId from subdomain
-    if(host.split('.')[1] === 'agent'){
-        return getAgentProxy(sandboxId)(req, res, next)
+    const sandboxId = host.split('.')[0];
+    if (host.split('.')[1] === 'agent') {
+        return getAgentProxy(sandboxId)(req, res, next);
+    } else if (host.split('.')[1] === 'preview') {
+        return getProxy(sandboxId)(req, res, next);
+    } else {
+        next();                                    
     }
-    else if(host.split('.')[1] === 'preview'){
-        return getProxy(sandboxId)(req, res, next)
-    }
-
 });
 
-export default app;
+const server = http.createServer(app);
+
+server.on('upgrade', (req, socket, head) => {
+    const host = req.headers.host;
+    const sandboxId = host.split('.')[0];
+    const type = host.split('.')[1];
+
+    console.log(`WS upgrade request for sandbox ${sandboxId}`);
+
+    if (type === 'agent') {
+        getAgentProxy(sandboxId).upgrade(req, socket, head);
+    } else if (type === 'preview') {
+        getProxy(sandboxId).upgrade(req, socket, head);
+    } else {
+        socket.destroy();
+    }
+});
+
+export default server;
