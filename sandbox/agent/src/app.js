@@ -1,4 +1,5 @@
 import express from "express"
+import cors from "cors";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
@@ -11,6 +12,7 @@ import os from "os";
 const WORKING_DIR = '/workspace'
 const app = express();
 const httpServer = http.createServer(app);
+app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

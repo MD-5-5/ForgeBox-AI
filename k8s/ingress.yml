@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: forgebox-ingress
   annotations:
-    ngimx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
     nginx.ingress.kubernetes.io/affinity: "cookie"
