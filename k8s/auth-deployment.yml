@@ -42,7 +42,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name:  database
-              key:  AUTH      
+              key:  AUTH     
+
+        - name:  MQ_URL
+          valueFrom:
+            secretKeyRef:
+              name:  database
+              key:  MQ_URL      
 
         - name:  GOOGLE_CLIENT_ID
           valueFrom:

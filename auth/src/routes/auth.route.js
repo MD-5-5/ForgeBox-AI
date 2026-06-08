@@ -3,6 +3,7 @@ import passport from "passport";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv"
+import { sendToQueue } from "../config/mq.js";
 
 dotenv.config()
 
@@ -34,6 +35,13 @@ router.get('/google/callback',passport.authenticate('google', {
 
             await user.save()
         }
+
+        await sendToQueue({
+            userId : user._id,
+            action: 'google_login',
+            timestamp : new Date().toISOString(),
+            email : emails[0].value
+        })
         const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"1h"})
 
         res.cookie("token",token,{

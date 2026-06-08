@@ -88,12 +88,21 @@ export async function createPod(sandboxId) {
         }
     };
 
-    const respone  = await k8sCoreV1Api.createNamespacedPod({
+    const response  = await k8sCoreV1Api.createNamespacedPod({
         namespace:'default',
         body:podManifest
     });
 
-    return respone
+    return response
 }
 
 //This code creates a pod in Kubernetes with the specified sandboxId. The pod is labeled with the sandboxId for easy identification and management. The container within the pod uses the "template" image and exposes port 5173.
+
+
+export async function deletePod (sandboxId) {
+    const response = await k8sCoreV1Api.deleteNamespacedPod({
+        namespace: 'default',
+        name: `sandbox-pod-${sandboxId}`,
+    });
+    return response;
+}
