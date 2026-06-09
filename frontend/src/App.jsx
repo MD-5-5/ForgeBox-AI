@@ -5,6 +5,7 @@ import ChatPanel from './components/ChatPanel';
 import PreviewPanel from './components/PreviewPanel';
 import TerminalPanel from './components/TerminalPanel';
 import FileExplorer from './components/FileExplorer';
+import { startSandbox } from './api/sandbox';
 import './index.css';
 
 // Resizable divider component
@@ -58,6 +59,7 @@ export default function App() {
   const [activeBottomTab, setActiveBottomTab] = useState('terminal');
   const [errorMsg, setErrorMsg] = useState(null);
 
+  // Restore session from URL (e.g. after a page refresh with ?sandboxId=…)
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('sandboxId');
@@ -68,16 +70,16 @@ export default function App() {
     }
   }, []);
 
-  const handleStartSandbox = useCallback(async () => {
+  /**
+   * Launch a sandbox for the given project.
+   * Called by LandingScreen when the user clicks "Open" on a project card.
+   * @param {string} projectId
+   */
+  const handleLaunch = useCallback(async (projectId) => {
     setStatus('creating');
     setErrorMsg(null);
     try {
-      const res = await fetch('/api/sandbox/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
-      const data = await res.json();
+      const data = await startSandbox(projectId);
       window.history.pushState({}, '', `/?sandboxId=${data.sandboxId}`);
       setSandboxId(data.sandboxId);
       setPreviewUrl(data.previewUrl);
@@ -128,7 +130,7 @@ export default function App() {
       {/* Main content */}
       <div className="flex-1 overflow-hidden">
         {status === 'idle' || status === 'creating' ? (
-          <LandingScreen onStart={handleStartSandbox} isCreating={status === 'creating'} />
+          <LandingScreen onLaunch={handleLaunch} isCreating={status === 'creating'} />
         ) : (
           /* IDE Layout */
           <div className="flex h-full overflow-hidden">

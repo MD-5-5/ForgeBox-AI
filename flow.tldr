@@ -1092,9 +1092,9 @@
 			"typeName": "shape"
 		},
 		{
-			"x": 5620.663135734102,
-			"y": 5961.826509477231,
-			"z": 0.058962447619182456,
+			"x": 6748.104508904138,
+			"y": 4768.182777702283,
+			"z": 0.07682739331504855,
 			"meta": {},
 			"id": "camera:page:page",
 			"typeName": "camera"
@@ -2426,7 +2426,7 @@
 			"editingShapeId": null,
 			"croppingShapeId": null,
 			"selectedShapeIds": [],
-			"hoveredShapeId": "shape:TTGD2LU7tlfHYjdsSwD2t",
+			"hoveredShapeId": null,
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -6866,7 +6866,7 @@
 			"isFocused": true,
 			"devicePixelRatio": 1.5,
 			"isCoarsePointer": true,
-			"isHoveringCanvas": true,
+			"isHoveringCanvas": null,
 			"openMenus": [],
 			"isChangingStyle": false,
 			"isReadonly": false,

@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    host: true,
+    host: "0.0.0.0",
     port : 5173,
     hmr:{
       clientPort : 5173,
@@ -15,6 +15,11 @@ export default defineConfig({
         target: "http://localhost",
         changeOrigin: true,
         secure: false,
+        configure: (proxy) => {
+          proxy.on('error', (err) => console.log('proxy error', err))
+          proxy.on('proxyReq', (_, req) => console.log('proxying:', req.method, req.url))
+          proxy.on('proxyRes', (res, req) => console.log('got response:', res.statusCode, req.url))
+        }
       },
     },
   },

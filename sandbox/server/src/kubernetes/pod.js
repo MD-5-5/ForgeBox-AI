@@ -1,6 +1,6 @@
 import { k8sCoreV1Api } from "./config.js";
 
-export async function createPod(sandboxId) {
+export async function createPod(sandboxId, projectId) {
     const podManifest = {
         metadata: {
             name: `sandbox-pod-${sandboxId}`,
@@ -83,6 +83,56 @@ export async function createPod(sandboxId) {
                             mountPath:'/workspace'
                         }
                     ]    
+                },
+                {
+                    image : "sync-agent",
+                    imagePullPolicy:"IfNotPresent",
+                    name:'sync-agent-container',
+                    ports:[
+                        {
+                            containerPort:4000,
+                            name:'http'
+                        }
+                    ],
+                    env:[
+                        {
+                            name:'PROJECT_ID',
+                            value:projectId
+                        },
+                        {
+                            name:'AWS_REGION',
+                            valueFrom:{
+                                secretKeyRef:{
+                                    name:'aws-secret',
+                                    key:'AWS_REGION'
+                                }
+                            }
+                        },
+                        {
+                            name:'AWS_ACCESS_KEY_ID',
+                            valueFrom:{
+                                secretKeyRef:{
+                                    name:'aws-secret',
+                                    key:'AWS_ACCESS_KEY_ID'
+                                }
+                            }
+                        },
+                        {
+                            name:'AWS_SECRET_ACCESS_KEY',
+                            valueFrom:{
+                                secretKeyRef:{
+                                    name:'aws-secret',
+                                    key:'AWS_SECRET_ACCESS_KEY'
+                                }
+                            }
+                        }
+                    ],
+                    volumeMounts:[
+                        {
+                            name:'workspace-volume',
+                            mountPath:'/workspace'
+                        }
+                    ]
                 }
             ]
         }
