@@ -20,22 +20,45 @@ export default function PreviewPanel({ previewUrl }) {
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--bg-primary)' }}>
       {/* Panel Header */}
-      <div className="flex items-center gap-2 px-3 py-2 shrink-0"
-        style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', height: '40px' }}>
-        {/* Traffic lights */}
-        <div className="flex items-center gap-1.5 mr-1">
-          <div className="w-3 h-3 rounded-full" style={{ background: '#ff5f57' }} />
-          <div className="w-3 h-3 rounded-full" style={{ background: '#febc2e' }} />
-          <div className="w-3 h-3 rounded-full" style={{ background: '#28c840' }} />
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '0 10px',
+          height: 36,
+          borderBottom: '1px solid var(--border-subtle)',
+          flexShrink: 0,
+        }}
+      >
+        {/* Minimalist traffic lights */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginRight: 4 }}>
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ff5f57' }} />
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#febc2e' }} />
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#28c840' }} />
         </div>
 
         {/* URL bar */}
-        <div className="flex-1 flex items-center gap-2 px-3 py-1 rounded-md text-xs font-mono truncate"
-          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
+        <div
+          className="font-mono"
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '3px 8px',
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 4,
+            fontSize: 10,
+            color: 'var(--text-muted)',
+            overflow: 'hidden',
+          }}
+        >
           {previewUrl ? (
             <>
-              <span style={{ color: 'var(--accent-green)', fontSize: '9px' }}>●</span>
-              <span className="truncate" style={{ color: 'var(--text-secondary)' }}>{previewUrl}</span>
+              <span style={{ color: 'var(--green)', fontSize: 8, flexShrink: 0 }}>●</span>
+              <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{previewUrl}</span>
             </>
           ) : (
             <span>about:blank</span>
@@ -43,26 +66,52 @@ export default function PreviewPanel({ previewUrl }) {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1">
-          <button id="preview-refresh-btn" onClick={refresh} disabled={!previewUrl}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <button
+            id="preview-refresh-btn"
+            onClick={refresh}
+            disabled={!previewUrl}
             title="Refresh preview"
-            className="w-7 h-7 rounded-md flex items-center justify-center transition-all disabled:opacity-30"
-            style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-elevated)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            style={{
+              width: 26, height: 26,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 4,
+              color: 'var(--text-muted)',
+              cursor: previewUrl ? 'pointer' : 'not-allowed',
+              opacity: previewUrl ? 1 : 0.3,
+              transition: 'background 0.15s, color 0.15s',
+            }}
+            onMouseEnter={(e) => { if (previewUrl) { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-secondary)'; } }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
               className={isRefreshing ? 'animate-spin-slow' : ''}>
               <polyline points="23 4 23 10 17 10" />
               <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
             </svg>
           </button>
-          <button id="preview-newtab-btn" onClick={openInNewTab} disabled={!previewUrl}
+          <button
+            id="preview-newtab-btn"
+            onClick={openInNewTab}
+            disabled={!previewUrl}
             title="Open in new tab"
-            className="w-7 h-7 rounded-md flex items-center justify-center transition-all disabled:opacity-30"
-            style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-elevated)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            style={{
+              width: 26, height: 26,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 4,
+              color: 'var(--text-muted)',
+              cursor: previewUrl ? 'pointer' : 'not-allowed',
+              opacity: previewUrl ? 1 : 0.3,
+              transition: 'background 0.15s, color 0.15s',
+            }}
+            onMouseEnter={(e) => { if (previewUrl) { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-secondary)'; } }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
@@ -92,13 +141,30 @@ export default function PreviewPanel({ previewUrl }) {
         ) : (
           <>
             {!isLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center z-10"
-                style={{ background: 'var(--bg-primary)' }}>
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin-slow" />
-                  <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Loading preview...</span>
-                </div>
-              </div>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+              background: 'var(--bg-primary)',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <div
+                className="animate-spin-slow"
+                style={{
+                  width: 20, height: 20,
+                  border: '1.5px solid rgba(124,58,237,0.2)',
+                  borderTopColor: 'var(--accent)',
+                  borderRadius: '50%',
+                }}
+              />
+              <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-faint)', letterSpacing: '0.06em' }}>Loading preview</span>
+            </div>
+          </div>
             )}
             <iframe
               ref={iframeRef}

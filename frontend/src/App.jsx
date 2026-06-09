@@ -23,26 +23,52 @@ function Divider({ direction = 'horizontal' }) {
   );
 }
 
-// Tab bar component
+// Tab bar component — minimalist panel header style
 function TabBar({ tabs, activeTab, onTabChange }) {
   return (
-    <div className="flex items-center shrink-0"
-      style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', height: '36px' }}>
-      {tabs.map(tab => (
+    <div
+      className="flex items-center shrink-0"
+      style={{
+        height: 34,
+        borderBottom: '1px solid var(--border-subtle)',
+        background: 'var(--bg-secondary)',
+        paddingLeft: 4,
+      }}
+    >
+      {tabs.map((tab) => (
         <button
           key={tab.id}
           id={`tab-${tab.id}`}
           onClick={() => onTabChange(tab.id)}
-          className="flex items-center gap-1.5 px-4 h-full text-xs font-medium transition-all relative"
           style={{
-            color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
-            background: activeTab === tab.id ? 'var(--bg-secondary)' : 'transparent',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 5,
+            padding: '0 12px',
+            height: '100%',
+            background: 'transparent',
+            border: 'none',
             borderRight: '1px solid var(--border-subtle)',
+            cursor: 'pointer',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 10,
+            fontWeight: 400,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
+            transition: 'color 0.15s',
           }}
         >
           {activeTab === tab.id && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5"
-              style={{ background: 'var(--accent-blue)' }} />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 0, left: 0, right: 0,
+                height: 1,
+                background: 'var(--accent)',
+              }}
+            />
           )}
           {tab.icon}
           {tab.label}
@@ -104,53 +130,80 @@ export default function App() {
   ];
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden', background: 'var(--bg-primary)' }}>
       {/* Header */}
       <Header sandboxId={sandboxId} status={status} />
 
       {/* Error Toast */}
       {errorMsg && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-xl text-sm flex items-center gap-3 animate-fade-in"
+        <div
+          className="animate-fade-in font-mono"
           style={{
-            background: 'rgba(239,68,68,0.15)',
-            border: '1px solid rgba(239,68,68,0.3)',
+            position: 'absolute',
+            top: 56, left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '10px 14px',
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.2)',
+            borderRadius: 8,
             color: '#fca5a5',
-            backdropFilter: 'blur(12px)',
-          }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            fontSize: 12,
+            backdropFilter: 'blur(8px)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
           {errorMsg}
-          <button onClick={() => setErrorMsg(null)} className="ml-2" style={{ color: '#fca5a5' }}>✕</button>
+          <button
+            onClick={() => setErrorMsg(null)}
+            style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', marginLeft: 4, fontSize: 12 }}
+          >
+            ✕
+          </button>
         </div>
       )}
 
       {/* Main content */}
-      <div className="flex-1 overflow-hidden">
+      <div style={{ flex: 1, overflow: 'hidden' }}>
         {status === 'idle' || status === 'creating' ? (
           <LandingScreen onLaunch={handleLaunch} isCreating={status === 'creating'} />
         ) : (
           /* IDE Layout */
-          <div className="flex h-full overflow-hidden">
+          <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
             {/* Left: Chat Panel */}
-            <div className="flex flex-col h-full animate-fade-in-left"
-              style={{ width: '320px', minWidth: '260px', flexShrink: 0, borderRight: '1px solid var(--border-subtle)' }}>
+            <div
+              className="animate-fade-in-left"
+              style={{
+                width: 300,
+                minWidth: 240,
+                flexShrink: 0,
+                borderRight: '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               <ChatPanel sandboxId={sandboxId} />
             </div>
 
             {/* Center: Preview + Terminal */}
-            <div className="flex flex-col flex-1 overflow-hidden animate-fade-in">
+            <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
               {/* Preview (top ~60%) */}
-              <div style={{ flex: '3', minHeight: 0, borderBottom: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+              <div style={{ flex: 3, minHeight: 0, borderBottom: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
                 <PreviewPanel previewUrl={previewUrl} />
               </div>
 
               {/* Terminal (bottom ~40%) */}
-              <div style={{ flex: '2', minHeight: 0, overflow: 'hidden' }}>
+              <div style={{ flex: 2, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <TabBar tabs={bottomTabs} activeTab={activeBottomTab} onTabChange={setActiveBottomTab} />
-                <div style={{ height: 'calc(100% - 36px)', overflow: 'hidden' }}>
+                <div style={{ flex: 1, overflow: 'hidden' }}>
                   {activeBottomTab === 'terminal' && (
                     <TerminalPanel sandboxId={sandboxId} />
                   )}
@@ -159,8 +212,17 @@ export default function App() {
             </div>
 
             {/* Right: File Explorer */}
-            <div className="flex flex-col h-full animate-fade-in-right"
-              style={{ width: '260px', minWidth: '200px', flexShrink: 0, borderLeft: '1px solid var(--border-subtle)' }}>
+            <div
+              className="animate-fade-in-right"
+              style={{
+                width: 240,
+                minWidth: 180,
+                flexShrink: 0,
+                borderLeft: '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               <FileExplorer sandboxId={sandboxId} />
             </div>
           </div>

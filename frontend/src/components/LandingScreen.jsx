@@ -1,67 +1,102 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchProjects, createProject } from '../api/sandbox';
 
-// ── tiny helpers ─────────────────────────────────────────────────────────────
-
-function Spinner({ size = 18 }) {
+// ── Spinner ──────────────────────────────────────────────────────────────────
+function Spinner({ size = 16 }) {
   return (
     <span
+      className="animate-spin-slow"
       style={{
         display: 'inline-block',
         width: size,
         height: size,
-        border: '2px solid rgba(255,255,255,0.25)',
+        border: '1.5px solid rgba(255,255,255,0.15)',
         borderTopColor: 'white',
         borderRadius: '50%',
-        animation: 'spin-slow 0.75s linear infinite',
         flexShrink: 0,
       }}
     />
   );
 }
 
+// ── Feature Tag ───────────────────────────────────────────────────────────────
+function FeatureTag({ label }) {
+  return (
+    <span
+      className="font-mono"
+      style={{
+        fontSize: 10,
+        fontWeight: 400,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        color: 'var(--text-muted)',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 4,
+        padding: '3px 8px',
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+// ── Project Card ──────────────────────────────────────────────────────────────
 function ProjectCard({ project, onOpen, isOpening }) {
   const initials = project.title
     .split(' ')
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('');
+    .join('') || '?';
 
   return (
     <div
-      className="group relative flex items-center gap-4 px-5 py-4 rounded-2xl cursor-pointer transition-all duration-200"
+      className="project-card"
       style={{
-        background: 'var(--bg-elevated)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        padding: '10px 12px',
+        borderRadius: 8,
+        background: 'rgba(255,255,255,0.02)',
         border: '1px solid var(--border-subtle)',
+        cursor: 'pointer',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)';
-        e.currentTarget.style.background = 'var(--bg-hover)';
-        e.currentTarget.style.boxShadow = '0 0 20px rgba(99,102,241,0.08)';
+        e.currentTarget.style.borderColor = 'var(--border-active)';
+        e.currentTarget.style.background = 'var(--accent-dim)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = 'var(--border-subtle)';
-        e.currentTarget.style.background = 'var(--bg-elevated)';
-        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
       }}
     >
       {/* Avatar */}
       <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-        style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', color: 'white' }}
+        style={{
+          width: 34,
+          height: 34,
+          borderRadius: 8,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #7C3AED, #a78bfa)',
+          fontSize: 11,
+          fontWeight: 600,
+          color: 'white',
+          letterSpacing: '0.02em',
+        }}
       >
-        {initials || '?'}
+        {initials}
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0">
-        <p
-          className="font-semibold text-sm truncate"
-          style={{ color: 'var(--text-primary)' }}
-        >
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', truncate: true, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {project.title}
         </p>
-        <p className="text-xs font-mono mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
+        <p className="font-mono" style={{ fontSize: 10, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {project._id}
         </p>
       </div>
@@ -71,27 +106,29 @@ function ProjectCard({ project, onOpen, isOpening }) {
         id={`open-project-${project._id}`}
         disabled={isOpening}
         onClick={() => onOpen(project)}
-        className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200"
+        className="btn-ghost"
         style={{
-          background: isOpening ? 'rgba(99,102,241,0.2)' : 'linear-gradient(135deg,#6366f1,#818cf8)',
-          color: 'white',
-          opacity: isOpening ? 0.7 : 1,
+          flexShrink: 0,
+          background: isOpening ? 'var(--accent-dim)' : undefined,
+          borderColor: isOpening ? 'var(--border-active)' : undefined,
+          color: isOpening ? 'var(--text-secondary)' : undefined,
           cursor: isOpening ? 'not-allowed' : 'pointer',
+          minWidth: 56,
+          justifyContent: 'center',
         }}
       >
-        {isOpening ? <Spinner size={14} /> : (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        {isOpening ? <Spinner size={12} /> : (
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
         )}
-        {isOpening ? 'Launching…' : 'Open'}
+        {isOpening ? 'Opening' : 'Open'}
       </button>
     </div>
   );
 }
 
-// ── New-project modal ─────────────────────────────────────────────────────────
-
+// ── New Project Modal ─────────────────────────────────────────────────────────
 function NewProjectModal({ onClose, onCreate }) {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
@@ -113,34 +150,49 @@ function NewProjectModal({ onClose, onCreate }) {
   };
 
   return (
-    // Backdrop
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: 'rgba(8,12,23,0.75)', backdropFilter: 'blur(8px)' }}
+      style={{ background: 'rgba(8,8,15,0.8)', backdropFilter: 'blur(8px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="w-full max-w-md mx-4 rounded-3xl p-8 animate-fade-in"
+        className="animate-fade-in"
         style={{
+          width: '100%',
+          maxWidth: 400,
+          margin: '0 16px',
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-default)',
-          boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
         }}
       >
-        <div className="flex items-center justify-between mb-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-5">
           <div>
-            <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+            <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               New Project
             </h2>
-            <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
               Give your sandbox project a name
             </p>
           </div>
           <button
             id="close-new-project-modal"
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-            style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)' }}
+            style={{
+              width: 26, height: 26,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 6,
+              color: 'var(--text-muted)',
+              cursor: 'pointer',
+              fontSize: 12,
+              flexShrink: 0,
+              transition: 'color 0.15s',
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
           >
@@ -148,14 +200,13 @@ function NewProjectModal({ onClose, onCreate }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div>
             <label
               htmlFor="project-title-input"
-              className="block text-xs font-medium mb-2"
-              style={{ color: 'var(--text-secondary)' }}
+              style={{ display: 'block', fontSize: 11, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 6, letterSpacing: '0.02em' }}
             >
-              Project Title
+              Project Name
             </label>
             <input
               id="project-title-input"
@@ -164,38 +215,40 @@ function NewProjectModal({ onClose, onCreate }) {
               placeholder="e.g. My Awesome App"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
               style={{
+                width: '100%',
+                padding: '8px 12px',
                 background: 'var(--bg-elevated)',
                 border: '1px solid var(--border-default)',
+                borderRadius: 6,
                 color: 'var(--text-primary)',
+                fontSize: 13,
                 fontFamily: 'inherit',
+                outline: 'none',
+                transition: 'border-color 0.15s',
               }}
-              onFocus={(e) => (e.target.style.borderColor = 'var(--accent-blue)')}
+              onFocus={(e) => (e.target.style.borderColor = 'var(--accent)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-default)')}
             />
           </div>
 
           {error && (
-            <p
-              className="text-xs px-3 py-2 rounded-lg"
-              style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#fca5a5' }}
-            >
+            <p style={{
+              fontSize: 12, padding: '8px 10px',
+              background: 'rgba(239,68,68,0.08)',
+              border: '1px solid rgba(239,68,68,0.2)',
+              borderRadius: 6, color: '#fca5a5',
+            }}>
               {error}
             </p>
           )}
 
-          <div className="flex gap-3 mt-2">
+          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors"
-              style={{
-                background: 'var(--bg-elevated)',
-                border: '1px solid var(--border-subtle)',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-              }}
+              className="btn-ghost"
+              style={{ flex: 1, justifyContent: 'center', padding: '8px' }}
             >
               Cancel
             </button>
@@ -203,17 +256,10 @@ function NewProjectModal({ onClose, onCreate }) {
               id="create-project-btn"
               type="submit"
               disabled={loading || !title.trim()}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all"
-              style={{
-                background: loading || !title.trim()
-                  ? 'rgba(99,102,241,0.3)'
-                  : 'linear-gradient(135deg,#6366f1,#818cf8)',
-                color: 'white',
-                cursor: loading || !title.trim() ? 'not-allowed' : 'pointer',
-                boxShadow: loading || !title.trim() ? 'none' : '0 0 20px rgba(99,102,241,0.35)',
-              }}
+              className="btn-primary"
+              style={{ flex: 1, justifyContent: 'center', padding: '8px' }}
             >
-              {loading && <Spinner size={15} />}
+              {loading && <Spinner size={13} />}
               {loading ? 'Creating…' : 'Create Project'}
             </button>
           </div>
@@ -224,15 +270,13 @@ function NewProjectModal({ onClose, onCreate }) {
 }
 
 // ── Main LandingScreen ────────────────────────────────────────────────────────
-
 export default function LandingScreen({ onLaunch }) {
   const [projects, setProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [fetchError, setFetchError] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [openingId, setOpeningId] = useState(null); // which project is being launched
+  const [openingId, setOpeningId] = useState(null);
 
-  // Fetch projects on mount
   const loadProjects = useCallback(async () => {
     setLoadingProjects(true);
     setFetchError(null);
@@ -246,20 +290,16 @@ export default function LandingScreen({ onLaunch }) {
     }
   }, []);
 
-  useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
+  useEffect(() => { loadProjects(); }, [loadProjects]);
 
-  // Called when a new project is created via the modal
   const handleProjectCreated = (project) => {
     setShowModal(false);
     setProjects((prev) => [project, ...prev]);
   };
 
-  // Called when user clicks "Open" on a project card
   const handleOpen = async (project) => {
     setOpeningId(project._id);
-    await onLaunch(project._id); // parent handles startSandbox + state
+    await onLaunch(project._id);
     setOpeningId(null);
   };
 
@@ -272,172 +312,172 @@ export default function LandingScreen({ onLaunch }) {
         />
       )}
 
-      <div className="flex h-full w-full overflow-hidden">
-        {/* ── Left pane: hero ── */}
-        <div
-          className="hidden md:flex flex-col items-center justify-center flex-1 px-12 relative overflow-hidden"
-          style={{ borderRight: '1px solid var(--border-subtle)' }}
-        >
-          {/* Blobs */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10"
-              style={{ background: 'radial-gradient(circle,#6366f1,transparent)', filter: 'blur(80px)' }} />
-            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-8"
-              style={{ background: 'radial-gradient(circle,#818cf8,transparent)', filter: 'blur(100px)' }} />
-            {/* Grid */}
-            <div className="absolute inset-0 opacity-5" style={{
-              backgroundImage: 'linear-gradient(var(--border-subtle) 1px,transparent 1px),linear-gradient(90deg,var(--border-subtle) 1px,transparent 1px)',
-              backgroundSize: '60px 60px',
-            }} />
-          </div>
+      <div style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden' }}>
 
-          <div className="relative z-10 flex flex-col items-center text-center max-w-lg animate-fade-in">
-            {/* Icon */}
-            <div className="mb-8 relative">
-              <div
-                className="w-24 h-24 rounded-3xl flex items-center justify-center animate-float"
-                style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 40px rgba(99,102,241,0.5)' }}
-              >
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                  <rect x="6"  y="6"  width="14" height="14" rx="3" fill="white" fillOpacity="0.9" />
-                  <rect x="28" y="6"  width="14" height="14" rx="3" fill="white" fillOpacity="0.6" />
-                  <rect x="6"  y="28" width="14" height="14" rx="3" fill="white" fillOpacity="0.6" />
-                  <rect x="28" y="28" width="14" height="14" rx="3" fill="white" fillOpacity="0.9" />
-                  <line x1="20" y1="13" x2="28" y2="13" stroke="white" strokeWidth="2" strokeOpacity="0.8" />
-                  <line x1="13" y1="20" x2="13" y2="28" stroke="white" strokeWidth="2" strokeOpacity="0.8" />
-                  <line x1="35" y1="20" x2="35" y2="28" stroke="white" strokeWidth="2" strokeOpacity="0.8" />
-                  <line x1="20" y1="35" x2="28" y2="35" stroke="white" strokeWidth="2" strokeOpacity="0.8" />
+        {/* ── LEFT: Hero ────────────────────────────────────────────────────── */}
+        <div
+          className="dot-grid"
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '48px 64px',
+            position: 'relative',
+            overflow: 'hidden',
+            borderRight: '1px solid var(--border-subtle)',
+          }}
+        >
+          {/* Ambient glow */}
+          <div style={{
+            position: 'absolute',
+            top: '30%', left: '40%',
+            width: 400, height: 400,
+            background: 'radial-gradient(circle, rgba(124,58,237,0.07), transparent 65%)',
+            pointerEvents: 'none',
+            transform: 'translate(-50%, -50%)',
+          }} />
+
+          <div className="animate-fade-in" style={{ position: 'relative', zIndex: 1, maxWidth: 480 }}>
+            {/* Logo + brand mark */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 48 }}>
+              <div style={{
+                width: 32, height: 32,
+                background: 'linear-gradient(135deg, #7C3AED, #a78bfa)',
+                borderRadius: 6,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <rect x="2" y="2" width="5" height="5" rx="1" fill="white" fillOpacity="0.95" />
+                  <rect x="9" y="2" width="5" height="5" rx="1" fill="white" fillOpacity="0.45" />
+                  <rect x="2" y="9" width="5" height="5" rx="1" fill="white" fillOpacity="0.45" />
+                  <rect x="9" y="9" width="5" height="5" rx="1" fill="white" fillOpacity="0.95" />
                 </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full animate-pulse-glow"
-                style={{ background: 'var(--accent-green)', boxShadow: '0 0 12px var(--accent-green)' }} />
+              <span className="font-mono" style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                ForgeBox
+              </span>
             </div>
 
-            <h1
-              className="text-6xl font-bold mb-4"
-              style={{
-                background: 'linear-gradient(135deg,#fff 30%,#818cf8)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                letterSpacing: '-1.5px',
-              }}
-            >
-              ForgeBox
+            {/* Main headline */}
+            <h1 style={{
+              fontSize: 56,
+              fontWeight: 500,
+              letterSpacing: '-0.04em',
+              lineHeight: 1.05,
+              color: 'var(--text-primary)',
+              marginBottom: 16,
+            }}>
+              Build with AI.<br />
+              <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Ship with confidence.</span>
             </h1>
-            <p className="text-lg mb-2" style={{ color: 'var(--text-accent)' }}>AI-Powered Sandbox IDE</p>
-            <p className="text-base mb-10 max-w-md" style={{ color: 'var(--text-secondary)', lineHeight: '1.7' }}>
+
+            {/* Subtitle */}
+            <p style={{
+              fontSize: 14,
+              color: 'var(--text-muted)',
+              lineHeight: 1.7,
+              marginBottom: 36,
+              maxWidth: 380,
+            }}>
               Spin up isolated sandbox environments, chat with AI to generate frontends,
-              and preview your changes instantly — all in one place.
+              and preview your changes in real-time — all in one place.
             </p>
 
-            {/* Feature pills */}
-            <div className="flex flex-wrap gap-3 justify-center">
-              {['AI Code Generation', 'Live Preview', 'Integrated Terminal', 'File Explorer'].map((f) => (
-                <span key={f} className="px-4 py-1.5 rounded-full text-sm"
-                  style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)', color: 'var(--text-accent)' }}>
-                  {f}
-                </span>
+            {/* Feature tags */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {['Sandboxed', 'AI Code Gen', 'Live Preview', 'Terminal'].map((f) => (
+                <FeatureTag key={f} label={f} />
               ))}
             </div>
           </div>
         </div>
 
-        {/* ── Right pane: projects ── */}
-        <div
-          className="flex flex-col w-full md:w-96 shrink-0"
-          style={{ background: 'var(--bg-secondary)' }}
-        >
+        {/* ── RIGHT: Projects Panel ──────────────────────────────────────────── */}
+        <div style={{
+          width: 360,
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'var(--bg-secondary)',
+        }}>
           {/* Panel header */}
-          <div
-            className="flex items-center justify-between px-6 py-5"
-            style={{ borderBottom: '1px solid var(--border-subtle)' }}
-          >
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 16px',
+            height: 48,
+            borderBottom: '1px solid var(--border-subtle)',
+            flexShrink: 0,
+          }}>
             <div>
-              <h2 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>
-                My Projects
-              </h2>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                {projects.length} project{projects.length !== 1 ? 's' : ''}
-              </p>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>Projects</div>
+              <div className="font-mono" style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>
+                {projects.length} {projects.length === 1 ? 'project' : 'projects'}
+              </div>
             </div>
-
             <button
               id="new-project-btn"
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200"
-              style={{
-                background: 'linear-gradient(135deg,#6366f1,#818cf8)',
-                color: 'white',
-                boxShadow: '0 0 18px rgba(99,102,241,0.35)',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 0 28px rgba(99,102,241,0.55)')}
-              onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 0 18px rgba(99,102,241,0.35)')}
+              className="btn-primary"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              New Project
+              New
             </button>
           </div>
 
           {/* Project list */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
+          <div className="scroll-y" style={{ flex: 1, padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {loadingProjects ? (
-              /* Skeleton */
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="skeleton h-16 rounded-2xl" />
+                <div key={i} className="skeleton" style={{ height: 56, borderRadius: 8 }} />
               ))
             ) : fetchError ? (
-              <div
-                className="flex flex-col items-center justify-center gap-3 py-12 text-center"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-                <p className="text-sm">{fetchError}</p>
-                <button
-                  onClick={loadProjects}
-                  className="text-xs px-4 py-2 rounded-lg transition-colors"
-                  style={{ background: 'var(--bg-elevated)', color: 'var(--text-accent)', border: '1px solid var(--border-subtle)', cursor: 'pointer' }}
-                >
-                  Retry
-                </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '40px 0', textAlign: 'center' }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 8,
+                  background: 'rgba(239,68,68,0.06)',
+                  border: '1px solid rgba(239,68,68,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{fetchError}</p>
+                <button onClick={loadProjects} className="btn-ghost" style={{ fontSize: 11 }}>Retry</button>
               </div>
             ) : projects.length === 0 ? (
-              <div
-                className="flex flex-col items-center justify-center gap-4 py-16 text-center"
-              >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center"
-                  style={{ background: 'rgba(99,102,241,0.1)', border: '1px dashed rgba(99,102,241,0.3)' }}
-                >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" strokeWidth="1.5">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, padding: '48px 16px', textAlign: 'center' }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 10,
+                  background: 'var(--accent-dim)',
+                  border: '1px dashed rgba(124,58,237,0.3)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
                     <path d="M12 2L2 7l10 5 10-5-10-5z" />
                     <path d="M2 17l10 5 10-5" />
                     <path d="M2 12l10 5 10-5" />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>No projects yet</p>
-                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Create your first project to get started</p>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>No projects yet</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>Create your first project to get started</p>
                 </div>
                 <button
                   id="create-first-project-btn"
                   onClick={() => setShowModal(true)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold"
-                  style={{
-                    background: 'linear-gradient(135deg,#6366f1,#818cf8)',
-                    color: 'white',
-                    boxShadow: '0 0 20px rgba(99,102,241,0.3)',
-                    cursor: 'pointer',
-                  }}
+                  className="btn-primary"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>

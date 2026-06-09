@@ -19,31 +19,31 @@ export default function TerminalPanel({ sandboxId }) {
     // Create terminal
     const term = new Terminal({
       theme: {
-        background: '#080c17',
-        foreground: '#e2e8f0',
-        cursor: '#818cf8',
-        cursorAccent: '#080c17',
-        selectionBackground: 'rgba(99,102,241,0.3)',
-        black: '#1e293b',
+        background: '#08080f',
+        foreground: '#e6e3f8',
+        cursor: '#7C3AED',
+        cursorAccent: '#08080f',
+        selectionBackground: 'rgba(124,58,237,0.25)',
+        black: '#141428',
         red: '#f87171',
-        green: '#4ade80',
+        green: '#34d399',
         yellow: '#fbbf24',
         blue: '#818cf8',
         magenta: '#c084fc',
         cyan: '#22d3ee',
-        white: '#e2e8f0',
-        brightBlack: '#475569',
+        white: '#e6e3f8',
+        brightBlack: '#3a3a5a',
         brightRed: '#fca5a5',
-        brightGreen: '#86efac',
+        brightGreen: '#6ee7b7',
         brightYellow: '#fde68a',
         brightBlue: '#a5b4fc',
         brightMagenta: '#d8b4fe',
         brightCyan: '#67e8f9',
-        brightWhite: '#f8fafc',
+        brightWhite: '#f1f0ff',
       },
       fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-      fontSize: 13,
-      lineHeight: 1.5,
+      fontSize: 12,
+      lineHeight: 1.6,
       cursorBlink: true,
       cursorStyle: 'bar',
       scrollback: 5000,
@@ -121,39 +121,15 @@ export default function TerminalPanel({ sandboxId }) {
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--bg-primary)' }}>
-      {/* Panel Header */}
-      <div className="flex items-center gap-2 px-3 py-2 shrink-0"
-        style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', height: '40px' }}>
-        <div className="w-2 h-2 rounded-full flex-shrink-0"
-          style={{
-            background: connected ? 'var(--accent-green)' : error ? 'var(--accent-red)' : 'var(--accent-amber)',
-            boxShadow: connected ? '0 0 6px var(--accent-green)' : 'none',
-          }} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Terminal</span>
-        {connected && (
-          <span className="ml-2 text-xs font-mono truncate" style={{ color: 'var(--text-muted)' }}>
-            {sandboxId?.substring(0, 8)}...agent.localhost
-          </span>
-        )}
-        <div className="ml-auto flex items-center gap-2">
-          {error && (
-            <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}>
-              {error}
-            </span>
-          )}
-          <div className="text-xs px-2 py-0.5 rounded font-mono"
-            style={{
-              background: connected ? 'rgba(16,185,129,0.1)' : 'rgba(71,85,105,0.2)',
-              color: connected ? 'var(--accent-green)' : 'var(--text-muted)',
-              border: `1px solid ${connected ? 'rgba(16,185,129,0.3)' : 'var(--border-subtle)'}`,
-            }}>
-            {connected ? 'Connected' : 'Disconnected'}
-          </div>
-        </div>
-      </div>
+      {/* Panel Header — hidden: shown by TabBar above */}
+      <div
+        style={{
+          display: 'none',
+        }}
+      />
 
       {/* Terminal Container */}
-      <div className="flex-1 relative overflow-hidden" style={{ background: '#080c17' }}>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#08080f' }}>
         {!sandboxId ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center"

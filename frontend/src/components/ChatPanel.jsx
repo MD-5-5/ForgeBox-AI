@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+// ── Typing indicator ─────────────────────────────────────────────────────────
 function TypingIndicator() {
   return (
-    <div className="flex items-center gap-1.5 px-4 py-2">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 0' }}>
       <span className="typing-dot" />
       <span className="typing-dot" />
       <span className="typing-dot" />
@@ -10,12 +11,25 @@ function TypingIndicator() {
   );
 }
 
+// ── Stream lines ─────────────────────────────────────────────────────────────
 function StreamMessage({ lines }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       {lines.map((line, i) => (
-        <div key={i} className="stream-line flex items-start gap-2 text-xs py-0.5" style={{ color: 'var(--text-secondary)', animationDelay: `${i * 50}ms` }}>
-          <span className="mt-1 flex-shrink-0" style={{ color: 'var(--accent-green)' }}>›</span>
+        <div
+          key={i}
+          className="stream-line font-mono"
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 8,
+            fontSize: 11,
+            color: 'var(--text-secondary)',
+            animationDelay: `${i * 30}ms`,
+            lineHeight: 1.6,
+          }}
+        >
+          <span style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }}>›</span>
           <span>{line}</span>
         </div>
       ))}
@@ -23,14 +37,15 @@ function StreamMessage({ lines }) {
   );
 }
 
+// ── Main ChatPanel ────────────────────────────────────────────────────────────
 export default function ChatPanel({ sandboxId }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
       role: 'ai',
       type: 'text',
-      content: 'Hey! I\'m your AI coding assistant. Describe what frontend you want me to build and I\'ll generate it for you in real-time.',
-    }
+      content: "Hey! I'm your AI coding assistant. Describe what frontend you want me to build and I'll generate it for you in real-time.",
+    },
   ]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
@@ -47,7 +62,7 @@ export default function ChatPanel({ sandboxId }) {
     if (!input.trim() || isStreaming || !sandboxId) return;
 
     const userMsg = { id: Date.now(), role: 'user', type: 'text', content: input.trim() };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setIsStreaming(true);
     setStreamLines([]);
@@ -72,7 +87,7 @@ export default function ChatPanel({ sandboxId }) {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
+        const lines = chunk.split('\n').filter((l) => l.startsWith('data: '));
         for (const line of lines) {
           const text = line.replace(/^data: /, '').trim();
           if (text) {
@@ -82,23 +97,28 @@ export default function ChatPanel({ sandboxId }) {
         }
       }
 
-      // Summarise the final result
       const lastLine = accumulated[accumulated.length - 1] || 'Done!';
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'ai',
-        type: 'stream',
-        lines: accumulated,
-        summary: lastLine,
-      }]);
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        setMessages(prev => [...prev, {
+      setMessages((prev) => [
+        ...prev,
+        {
           id: Date.now() + 1,
           role: 'ai',
-          type: 'error',
-          content: `Error: ${err.message}`,
-        }]);
+          type: 'stream',
+          lines: accumulated,
+          summary: lastLine,
+        },
+      ]);
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            role: 'ai',
+            type: 'error',
+            content: `Error: ${err.message}`,
+          },
+        ]);
       }
     } finally {
       setIsStreaming(false);
@@ -119,43 +139,98 @@ export default function ChatPanel({ sandboxId }) {
     setStreamLines([]);
   };
 
+  const canSend = input.trim() && sandboxId && !isStreaming;
+
   return (
-    <div className="flex flex-col h-full" style={{ background: 'var(--bg-secondary)' }}>
-      {/* Panel Header */}
-      <div className="flex items-center gap-2 px-4 py-2.5 shrink-0"
-        style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)' }}>
-        <div className="w-2 h-2 rounded-full" style={{ background: 'var(--accent-blue)', boxShadow: '0 0 8px var(--accent-blue)' }} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>AI Assistant</span>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-secondary)' }}>
+
+      {/* ── Panel header ── */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '0 14px',
+        height: 36,
+        borderBottom: '1px solid var(--border-subtle)',
+        flexShrink: 0,
+      }}>
+        <span className={`glow-dot ${isStreaming ? '' : ''}`} style={{
+          width: 6, height: 6, borderRadius: '50%',
+          background: isStreaming ? 'var(--green)' : 'var(--accent)',
+          boxShadow: isStreaming
+            ? '0 0 6px rgba(16,185,129,0.5)'
+            : '0 0 6px rgba(124,58,237,0.5)',
+          flexShrink: 0,
+          animation: isStreaming ? 'liveDot 1s ease-in-out infinite' : undefined,
+        }} />
+        <span className="panel-label">AI Assistant</span>
         {isStreaming && (
-          <span className="ml-auto text-xs px-2 py-0.5 rounded-full animate-pulse"
-            style={{ background: 'rgba(99,102,241,0.2)', color: 'var(--accent-blue-light)', border: '1px solid rgba(99,102,241,0.3)' }}>
-            Generating...
+          <span
+            className="font-mono"
+            style={{
+              marginLeft: 'auto',
+              fontSize: 9,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: 'var(--green)',
+              background: 'rgba(16,185,129,0.08)',
+              border: '1px solid rgba(16,185,129,0.2)',
+              borderRadius: 3,
+              padding: '2px 6px',
+            }}
+          >
+            Generating
           </span>
         )}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 scroll-y px-4 py-4 flex flex-col gap-4" style={{ overflowY: 'auto' }}>
+      {/* ── Messages ── */}
+      <div
+        className="scroll-y"
+        style={{ flex: 1, padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: 10 }}
+      >
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-            {msg.role === 'ai' && (
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mr-2.5 mt-0.5"
-                style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)', boxShadow: '0 0 10px rgba(99,102,241,0.4)' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-                </svg>
-              </div>
-            )}
-            <div className={`max-w-[85%] px-3.5 py-2.5 text-sm ${msg.role === 'user' ? 'chat-msg-user' : 'chat-msg-ai'}`}
-              style={{ color: 'var(--text-primary)', lineHeight: '1.6' }}>
+          <div
+            key={msg.id}
+            className="animate-fade-in"
+            style={{
+              display: 'flex',
+              justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+            }}
+          >
+            <div
+              className={msg.role === 'user' ? 'chat-msg-user' : 'chat-msg-ai'}
+              style={{
+                maxWidth: '88%',
+                padding: '8px 12px',
+                fontSize: 13,
+                lineHeight: 1.55,
+                color: 'var(--text-primary)',
+              }}
+            >
               {msg.type === 'text' && <p>{msg.content}</p>}
-              {msg.type === 'error' && <p style={{ color: 'var(--accent-red)' }}>{msg.content}</p>}
+              {msg.type === 'error' && <p style={{ color: 'var(--red)' }}>{msg.content}</p>}
               {msg.type === 'stream' && (
                 <div>
                   <StreamMessage lines={msg.lines} />
-                  <div className="mt-2 pt-2 text-xs font-medium" style={{ borderTop: '1px solid var(--border-subtle)', color: 'var(--accent-green)' }}>
-                    ✓ Completed
+                  <div
+                    className="font-mono"
+                    style={{
+                      marginTop: 8,
+                      paddingTop: 8,
+                      borderTop: '1px solid var(--border-subtle)',
+                      fontSize: 10,
+                      color: 'var(--green)',
+                      letterSpacing: '0.04em',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                    }}
+                  >
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Completed
                   </div>
                 </div>
               )}
@@ -163,17 +238,10 @@ export default function ChatPanel({ sandboxId }) {
           </div>
         ))}
 
-        {/* Live streaming area */}
+        {/* Live streaming message */}
         {isStreaming && (
-          <div className="flex justify-start animate-fade-in">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mr-2.5 mt-0.5"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)', boxShadow: '0 0 10px rgba(99,102,241,0.4)' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-              </svg>
-            </div>
-            <div className="chat-msg-ai px-3.5 py-2.5 text-sm max-w-[85%]">
+          <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div className="chat-msg-ai" style={{ padding: '8px 12px', maxWidth: '88%' }}>
               {streamLines.length > 0 ? (
                 <StreamMessage lines={streamLines} />
               ) : (
@@ -183,10 +251,11 @@ export default function ChatPanel({ sandboxId }) {
           </div>
         )}
 
+        {/* No sandbox message */}
         {!sandboxId && (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-xs text-center px-4" style={{ color: 'var(--text-muted)' }}>
-              Start a sandbox to begin chatting with the AI.
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <p className="font-mono" style={{ fontSize: 11, color: 'var(--text-faint)', textAlign: 'center', letterSpacing: '0.02em' }}>
+              Open a project to start chatting
             </p>
           </div>
         )}
@@ -194,43 +263,87 @@ export default function ChatPanel({ sandboxId }) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input area */}
-      <div className="shrink-0 p-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="flex gap-2 rounded-xl p-2"
-          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
+      {/* ── Input area ── */}
+      <div style={{ padding: '10px 12px', borderTop: '1px solid var(--border-subtle)', flexShrink: 0 }}>
+        <div
+          style={{
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--border-default)',
+            borderRadius: 8,
+            padding: '8px 10px',
+            display: 'flex',
+            gap: 8,
+            alignItems: 'flex-end',
+          }}
+          onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--border-active)')}
+          onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border-default)')}
+        >
           <textarea
             ref={textareaRef}
             id="chat-input"
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={!sandboxId || isStreaming}
-            placeholder={!sandboxId ? 'Start a sandbox to begin...' : 'Describe the frontend you want to build...'}
+            placeholder={!sandboxId ? 'Open a project first…' : 'Describe what you want to build…'}
             rows={2}
-            className="flex-1 bg-transparent resize-none text-sm outline-none"
             style={{
+              flex: 1,
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              resize: 'none',
+              fontSize: 13,
               color: 'var(--text-primary)',
-              caretColor: 'var(--accent-blue)',
-              lineHeight: '1.5'
+              caretColor: 'var(--accent)',
+              lineHeight: 1.5,
+              fontFamily: 'inherit',
             }}
           />
-          <div className="flex flex-col gap-1.5 justify-end">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center', justifyContent: 'flex-end' }}>
             {isStreaming ? (
-              <button id="stop-stream-btn" onClick={stopStream}
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
-                style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', color: '#ef4444' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="6" y="6" width="12" height="12" rx="1" />
+              <button
+                id="stop-stream-btn"
+                onClick={stopStream}
+                style={{
+                  width: 28, height: 28,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'rgba(239,68,68,0.1)',
+                  border: '1px solid rgba(239,68,68,0.25)',
+                  borderRadius: 6,
+                  color: 'var(--red)',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.18)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+              >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="5" y="5" width="14" height="14" rx="2" />
                 </svg>
               </button>
             ) : (
-              <button id="send-chat-btn" onClick={sendMessage} disabled={!input.trim() || !sandboxId}
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-30"
+              <button
+                id="send-chat-btn"
+                onClick={sendMessage}
+                disabled={!canSend}
                 style={{
-                  background: input.trim() && sandboxId ? 'linear-gradient(135deg, #6366f1, #818cf8)' : 'var(--bg-hover)',
-                  color: 'white'
-                }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  width: 28, height: 28,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: canSend ? 'var(--accent)' : 'var(--bg-hover)',
+                  border: 'none',
+                  borderRadius: 6,
+                  color: 'white',
+                  cursor: canSend ? 'pointer' : 'not-allowed',
+                  opacity: canSend ? 1 : 0.35,
+                  flexShrink: 0,
+                  transition: 'background 0.15s, opacity 0.15s, filter 0.15s',
+                }}
+                onMouseEnter={(e) => { if (canSend) e.currentTarget.style.filter = 'brightness(1.12)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="22" y1="2" x2="11" y2="13" />
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
@@ -238,8 +351,8 @@ export default function ChatPanel({ sandboxId }) {
             )}
           </div>
         </div>
-        <p className="text-xs mt-1.5 text-center" style={{ color: 'var(--text-muted)' }}>
-          Press Enter to send · Shift+Enter for new line
+        <p className="font-mono" style={{ fontSize: 9, color: 'var(--text-faint)', marginTop: 5, textAlign: 'center', letterSpacing: '0.04em' }}>
+          ENTER to send · SHIFT+ENTER for new line
         </p>
       </div>
     </div>

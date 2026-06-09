@@ -80,20 +80,30 @@ function TreeNode({ name, node, depth, onFileClick, activeFile }) {
   return (
     <button
       onClick={() => onFileClick(node.__path)}
-      className="w-full flex items-center gap-2 py-1 px-2 rounded-md text-left transition-all text-xs"
       style={{
-        paddingLeft: `${8 + depth * 14}px`,
-        background: isActive ? 'rgba(99,102,241,0.15)' : 'transparent',
-        color: isActive ? 'var(--accent-blue-light)' : 'var(--text-secondary)',
-        borderLeft: isActive ? '2px solid var(--accent-blue)' : '2px solid transparent',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: `5px 8px 5px ${8 + depth * 14}px`,
+        background: isActive ? 'var(--accent-dim)' : 'transparent',
+        color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+        borderLeft: isActive ? '2px solid var(--accent)' : '2px solid transparent',
+        border: 'none',
+        borderLeft: isActive ? '2px solid var(--accent)' : '2px solid transparent',
+        cursor: 'pointer',
+        textAlign: 'left',
+        transition: 'background 0.15s, color 0.15s',
+        fontSize: 12,
+        fontFamily: 'inherit',
       }}
-      onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'; }}
-      onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+      onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+      onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = isActive ? 'var(--accent-dim)' : 'transparent'; }}
     >
-      <span className="text-xs flex-shrink-0 font-mono" style={{ color: icon.color, fontSize: '10px', minWidth: '16px' }}>
+      <span className="font-mono flex-shrink-0" style={{ color: icon.color, fontSize: 10, minWidth: 16 }}>
         {icon.icon}
       </span>
-      <span className="truncate">{name}</span>
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
     </button>
   );
 }
@@ -144,17 +154,38 @@ export default function FileExplorer({ sandboxId }) {
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--bg-secondary)' }}>
       {/* Panel Header */}
-      <div className="flex items-center gap-2 px-3 py-2 shrink-0"
-        style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', height: '40px' }}>
-        <div className="w-2 h-2 rounded-full" style={{ background: '#fbbf24' }} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Explorer</span>
-        <button id="refresh-files-btn" onClick={fetchFiles} disabled={!sandboxId || loading}
-          className="ml-auto w-6 h-6 rounded flex items-center justify-center transition-all disabled:opacity-40"
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '0 12px',
+          height: 36,
+          borderBottom: '1px solid var(--border-subtle)',
+          flexShrink: 0,
+        }}
+      >
+        <span className="panel-label" style={{ flex: 1 }}>Files</span>
+        <button
+          id="refresh-files-btn"
+          onClick={fetchFiles}
+          disabled={!sandboxId || loading}
           title="Refresh file tree"
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-elevated)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-          style={{ color: 'var(--text-muted)' }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          style={{
+            width: 22, height: 22,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'transparent',
+            border: 'none',
+            borderRadius: 4,
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            opacity: (!sandboxId || loading) ? 0.4 : 1,
+            transition: 'color 0.15s, background 0.15s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+        >
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
             className={loading ? 'animate-spin-slow' : ''}>
             <polyline points="23 4 23 10 17 10" />
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
@@ -191,16 +222,31 @@ export default function FileExplorer({ sandboxId }) {
       {/* File content viewer */}
       {activeFile && (
         <div className="flex flex-col border-t" style={{ borderColor: 'var(--border-subtle)', flex: 1, minHeight: 0 }}>
-          <div className="flex items-center gap-2 px-3 py-1.5 shrink-0"
-            style={{ background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-subtle)' }}>
-            <span className="text-xs font-mono truncate" style={{ color: 'var(--text-accent)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '6px 12px',
+              background: 'var(--bg-elevated)',
+              borderBottom: '1px solid var(--border-subtle)',
+              flexShrink: 0,
+            }}
+          >
+            <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-accent)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {activeFile.split('/').pop()}
             </span>
-            <button onClick={() => { setActiveFile(null); setFileContent(null); }}
-              className="ml-auto w-4 h-4 flex items-center justify-center rounded text-xs"
-              style={{ color: 'var(--text-muted)' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
+            <button
+              onClick={() => { setActiveFile(null); setFileContent(null); }}
+              style={{
+                background: 'none', border: 'none',
+                color: 'var(--text-muted)', cursor: 'pointer', fontSize: 11,
+                padding: 2, lineHeight: 1,
+                transition: 'color 0.15s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+            >
               ✕
             </button>
           </div>
