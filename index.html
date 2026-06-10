@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForgeBox AI — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #ffffff;
+  color: #1a1a2e;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════
+   CSS VARIABLES
+═══════════════════════════════════════ */
+:root {
+  --orange:    #e8622a;
+  --orange-lt: #fef3ee;
+  --orange-md: #fde0d3;
+  --navy:      #1a1a2e;
+  --navy-lt:   #2d2d44;
+  --gray-50:   #f9fafb;
+  --gray-100:  #f3f4f6;
+  --gray-200:  #e5e7eb;
+  --gray-300:  #d1d5db;
+  --gray-400:  #9ca3af;
+  --gray-500:  #6b7280;
+  --gray-600:  #4b5563;
+  --gray-700:  #374151;
+  --gray-800:  #1f2937;
+  --blue:      #3b82f6;
+  --blue-lt:   #eff6ff;
+  --green:     #16a34a;
+  --green-lt:  #f0fdf4;
+  --amber:     #d97706;
+  --amber-lt:  #fffbeb;
+  --red:       #dc2626;
+  --red-lt:    #fef2f2;
+  --border:    #e5e7eb;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow:    0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.06);
+  --radius:    10px;
+  --mono:      'JetBrains Mono', 'Fira Code', monospace;
+  --serif:     'Playfair Display', Georgia, serif;
+}
+
+/* ═══════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-100); }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+/* ═══════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════ */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.topbar-brand {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-family: var(--serif);
+  font-size: 1.15rem; font-weight: 800;
+  color: var(--navy); letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.topbar-brand .dot { color: var(--orange); }
+.topbar-brand .tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #fff; background: var(--orange);
+  padding: 0.18rem 0.5rem; border-radius: 4px;
+}
+
+.topbar-nav { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
+.topbar-nav a {
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--gray-600); text-decoration: none;
+  padding: 0.4rem 0.75rem; border-radius: 6px;
+  transition: all 0.15s;
+}
+.topbar-nav a:hover { color: var(--navy); background: var(--gray-100); }
+.topbar-nav .gh {
+  color: #fff; background: var(--navy);
+  padding: 0.4rem 0.9rem; border-radius: 6px;
+  font-size: 0.78rem; margin-left: 0.5rem;
+}
+.topbar-nav .gh:hover { background: var(--navy-lt); color: #fff; }
+
+/* ═══════════════════════════════════════
+   PAGE LAYOUT
+═══════════════════════════════════════ */
+.page {
+  display: flex;
+  padding-top: 58px;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════ */
+.sidebar {
+  width: 248px; flex-shrink: 0;
+  position: sticky; top: 58px;
+  height: calc(100vh - 58px);
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--gray-50);
+  padding: 1.75rem 0 3rem;
+}
+
+.sb-section { padding: 0 1.25rem; margin-bottom: 1.75rem; }
+.sb-label {
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gray-400); margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+.sb-list { list-style: none; }
+.sb-list li a {
+  display: block; padding: 0.38rem 0.6rem;
+  font-size: 0.82rem; font-weight: 500;
+  color: var(--gray-600); text-decoration: none;
+  border-radius: 6px; border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.sb-list li a:hover {
+  color: var(--navy); background: var(--gray-200);
+  border-left-color: var(--orange); padding-left: 0.9rem;
+}
+
+/* ═══════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════ */
+.content {
+  flex: 1; min-width: 0;
+  padding: 3.5rem 4rem 8rem;
+  max-width: 900px;
+}
+
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+.hero {
+  padding-bottom: 3.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4rem;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 1.25rem;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 18px; height: 2px;
+  background: var(--orange); border-radius: 1px;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 3.75rem; font-weight: 800;
+  color: var(--navy); line-height: 1.05;
+  letter-spacing: -0.03em; margin-bottom: 1.25rem;
+}
+.hero h1 span { color: var(--orange); }
+
+.hero-sub {
+  font-size: 1.05rem; color: var(--gray-600);
+  max-width: 560px; line-height: 1.8; margin-bottom: 2rem;
+}
+
+.badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.badge {
+  font-family: var(--mono); font-size: 0.68rem; font-weight: 500;
+  padding: 0.28rem 0.65rem; border-radius: 5px;
+  border: 1.5px solid var(--gray-200);
+  color: var(--gray-600); background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.b-k  { border-color:#326CE5; color:#326CE5; background:#eff6ff; }
+.b-d  { border-color:#2496ED; color:#2496ED; background:#f0f9ff; }
+.b-n  { border-color:#16a34a; color:#16a34a; background:#f0fdf4; }
+.b-m  { border-color:#47A248; color:#166534; background:#f0fdf4; }
+.b-r  { border-color:#DC382D; color:#DC382D; background:#fef2f2; }
+.b-re { border-color:#0ea5e9; color:#0369a1; background:#f0f9ff; }
+.b-a  { border-color:#FF9900; color:#c45200; background:#fff7ed; }
+.b-s  { border-color:#9ca3af; color:#4b5563; background:var(--gray-50); }
+
+/* ═══════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════ */
+.section { margin-bottom: 4.5rem; scroll-margin-top: 78px; }
+
+h2 {
+  font-family: var(--serif);
+  font-size: 1.65rem; font-weight: 700;
+  color: var(--navy); margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+h2::after { content:''; flex:1; height:1px; background: var(--border); }
+
+h3 {
+  font-size: 0.92rem; font-weight: 700;
+  color: var(--navy); margin: 1.75rem 0 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+p { color: var(--gray-700); margin-bottom: 1rem; font-size: 0.93rem; }
+
+ul, ol { padding-left: 1.4rem; margin: 0.75rem 0 1rem; }
+li { font-size: 0.9rem; color: var(--gray-700); margin-bottom: 0.4rem; }
+li strong { color: var(--navy); }
+
+/* ═══════════════════════════════════════
+   SCREENSHOTS
+═══════════════════════════════════════ */
+.screenshot {
+  width: 100%; display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  margin: 1.5rem 0 0.5rem;
+}
+.caption {
+  text-align: center; font-size: 0.78rem;
+  color: var(--gray-400); font-style: italic;
+  margin-bottom: 1.75rem;
+}
+
+/* ═══════════════════════════════════════
+   CODE
+═══════════════════════════════════════ */
+pre {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+  position: relative;
+  box-shadow: var(--shadow);
+}
+pre[data-lang]::after {
+  content: attr(data-lang);
+  position: absolute; top: 0.65rem; right: 1rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em;
+}
+code {
+  font-family: var(--mono); font-size: 0.82rem;
+  color: #93c5fd; line-height: 1.7;
+}
+p code, li code, td code {
+  font-family: var(--mono); font-size: 0.79rem;
+  background: var(--gray-100); color: var(--orange);
+  border: 1px solid var(--gray-200);
+  padding: 0.1em 0.4em; border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════
+   TABLES
+═══════════════════════════════════════ */
+.tbl { overflow-x: auto; margin: 1rem 0 1.75rem; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+table { width: 100%; border-collapse: collapse; font-size: 0.86rem; background: #fff; }
+thead tr { background: var(--gray-50); border-bottom: 2px solid var(--border); }
+th {
+  text-align: left; padding: 0.75rem 1.1rem;
+  font-size: 0.7rem; font-weight: 700;
+  color: var(--gray-500); letter-spacing: 0.07em; text-transform: uppercase;
+}
+td {
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--gray-700); vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--gray-50); }
+td:first-child { font-family: var(--mono); font-size: 0.8rem; color: var(--navy); font-weight: 500; }
+
+/* ═══════════════════════════════════════
+   CALLOUTS
+═══════════════════════════════════════ */
+.callout {
+  border-radius: var(--radius); padding: 1.1rem 1.4rem;
+  margin: 1.5rem 0; border: 1px solid;
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  font-size: 0.88rem;
+}
+.callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+.callout-body { flex: 1; }
+.callout-title { font-weight: 700; margin-bottom: 0.25rem; font-size: 0.85rem; }
+.callout-body p { margin: 0; color: inherit; font-size: 0.86rem; }
+.c-info  { background: var(--blue-lt);  border-color: #bfdbfe; color: #1e40af; }
+.c-info  .callout-title { color: #1d4ed8; }
+.c-ok    { background: var(--green-lt); border-color: #bbf7d0; color: #166534; }
+.c-ok    .callout-title { color: #15803d; }
+.c-warn  { background: var(--amber-lt); border-color: #fde68a; color: #92400e; }
+.c-warn  .callout-title { color: #b45309; }
+.c-alert { background: var(--red-lt);   border-color: #fecaca; color: #991b1b; }
+.c-alert .callout-title { color: #dc2626; }
+
+/* ═══════════════════════════════════════
+   FLOW DIAGRAM
+═══════════════════════════════════════ */
+.flow-box {
+  background: var(--navy); border-radius: var(--radius);
+  padding: 1.5rem 2rem; margin: 1.25rem 0;
+  font-family: var(--mono); font-size: 0.78rem;
+  line-height: 2; overflow-x: auto;
+  box-shadow: var(--shadow);
+}
+.flow-box .fn  { color: #7dd3fc; }
+.flow-box .ar  { color: #6b7280; }
+.flow-box .lb  { color: #fcd34d; }
+.flow-box .cm  { color: #4b5563; font-style: italic; }
+
+/* ═══════════════════════════════════════
+   FEATURE GRID
+═══════════════════════════════════════ */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.feat-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+}
+.feat-card:hover { box-shadow: var(--shadow); border-color: var(--orange); transform: translateY(-2px); }
+.feat-icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.feat-title { font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+.feat-desc  { font-size: 0.79rem; color: var(--gray-500); line-height: 1.6; }
+
+/* ═══════════════════════════════════════
+   STEPS
+═══════════════════════════════════════ */
+.steps { margin: 1.5rem 0; }
+.step {
+  display: flex; gap: 1.25rem;
+  padding-bottom: 1.5rem; margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.step-num {
+  flex-shrink: 0; width: 30px; height: 30px;
+  border-radius: 50%; background: var(--orange); color: #fff;
+  font-family: var(--mono); font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(232,98,42,0.35);
+  margin-top: 0.05rem;
+}
+.step-title { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+.step-desc  { font-size: 0.84rem; color: var(--gray-500); }
+
+/* ═══════════════════════════════════════
+   DEPLOY SECTION
+═══════════════════════════════════════ */
+.deploy-card {
+  border: 1.5px solid #fed7aa;
+  border-radius: var(--radius); padding: 1.75rem 2rem;
+  background: linear-gradient(135deg, #fff7ed, #fff);
+  margin: 1.5rem 0; box-shadow: var(--shadow-sm);
+}
+.deploy-card h3 {
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--amber); margin: 0 0 0.65rem;
+  text-transform: none; letter-spacing: 0;
+}
+.deploy-card > p { font-size: 0.85rem; color: var(--gray-600); margin-bottom: 1.25rem; }
+.deploy-list { list-style: none; padding: 0; }
+.deploy-list li {
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #fed7aa;
+  font-size: 0.84rem;
+}
+.deploy-list li:last-child { border-bottom: none; }
+.dl-cause { font-weight: 700; color: var(--navy); margin-bottom: 0.2rem; font-size: 0.85rem; }
+.dl-fix   { font-size: 0.8rem; color: var(--gray-500); line-height: 1.55; }
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.75rem 4rem;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; color: var(--gray-400);
+  background: var(--gray-50);
+}
+footer a { color: var(--orange); text-decoration: none; font-weight: 500; }
+footer a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content { padding: 2rem 1.5rem 4rem; }
+  footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+  .hero h1 { font-size: 2.5rem; }
+  .grid2 { grid-template-columns: 1fr; }
+  .topbar-nav li:not(:last-child) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══════════════════════════════════════════ -->
+<header class="topbar">
+  <a href="#" class="topbar-brand">
+    ForgeBox<span class="dot">.</span>AI
+    <span class="tag">Docs</span>
+  </a>
+  <ul class="topbar-nav">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="https://github.com/MD-5-5/ForgeBox-AI.git" target="_blank" class="gh">GitHub ↗</a></li>
+  </ul>
+</header>
+
+<!-- ══ PAGE ══════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- ── SIDEBAR ────────────────────────── -->
+  <nav class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Introduction</div>
+      <ul class="sb-list">
+        <li><a href="#overview">What is ForgeBox AI?</a></li>
+        <li><a href="#problem">Problem It Solves</a></li>
+        <li><a href="#features">Features</a></li>
+      </ul>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Architecture</div>
+      <ul class="sb-list">
+        <li><a href="#architecture">System Overview</a></li>
+        <li><a href="#pods">Pod Architecture</a></li>
+        <li><a href="#request-flow">Request Flow</a></li>
+        <li><a href="#sandbox-lifecycle">Sandbox Lifecycle</a></li>
+        <li><a href="#ai-flow">AI Agent Flow</a></li>
+      </ul>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Infrastructure</div>
+      <ul class="sb-list">
+        <li><a href="#tech-stack">Tech Stack</a></li>
+        <li><a href="#setup">Local Setup</a></li>
+        <li><a href="#k8s">K8s Manifests</a></li>
+        <li><a href="#s3">File Persistence</a></li>
+        <li><a href="#deployment">Deployment Status</a></li>
+      </ul>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Design</div>
+      <ul class="sb-list">
+        <li><a href="#decisions">Key Decisions</a></li>
+        <li><a href="#scalability">Scalability</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── MAIN ────────────────────────────── -->
+  <main class="content">
+
+    <!-- HERO -->
+    <div class="hero" id="overview">
+      <div class="hero-eyebrow">Platform Documentation</div>
+      <h1>ForgeBox <span>AI</span></h1>
+      <p class="hero-sub">
+        A Kubernetes-native cloud IDE where every user gets a fully isolated,
+        AI-powered sandbox with live preview, in-browser terminal, and real-time
+        file sync. Think StackBlitz — but self-hosted, AI-native, built from scratch.
+      </p>
+      <div class="badge-row">
+        <span class="badge b-k">Kubernetes</span>
+        <span class="badge b-d">Docker</span>
+        <span class="badge b-n">Node.js</span>
+        <span class="badge b-m">MongoDB</span>
+        <span class="badge b-r">Redis</span>
+        <span class="badge b-re">React + Vite</span>
+        <span class="badge b-a">AWS EKS</span>
+        <span class="badge b-s">Socket.IO</span>
+      </div>
+    </div>
+
+    <!-- LANDING SCREENSHOT -->
+    <img src="assets/Landing_page.png" alt="ForgeBox AI Landing Page" class="screenshot">
+    <p class="caption">ForgeBox AI — Landing page and project dashboard</p>
+
+    <!-- PROBLEM -->
+    <div class="section" id="problem">
+      <h2>The Problem</h2>
+      <p>Traditional cloud IDEs require persistent VMs, complex user storage, high compute costs, and brittle shared-resource models. Most AI coding tools generate code in isolation — disconnected from a live dev server.</p>
+      <p>ForgeBox AI solves both simultaneously:</p>
+      <ul>
+        <li>Provisions <strong>ephemeral per-user Kubernetes pods</strong> — created when a project opens, destroyed after idle timeout</li>
+        <li>The AI agent operates <strong>inside the sandbox</strong> over internal Kubernetes network, writing to the same <code>/workspace</code> volume the Vite server watches</li>
+        <li>Every AI-generated change appears in the browser <strong>the moment it is written</strong> via Vite HMR</li>
+      </ul>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section" id="features">
+      <h2>Features</h2>
+
+      <img src="assets/complete_ide_window.png" alt="Complete IDE" class="screenshot">
+      <p class="caption">Full IDE layout — AI chat (left) · Live Vite preview (center) · In-browser terminal · File explorer (right)</p>
+
+      <div class="grid2">
+        <div class="feat-card">
+          <div class="feat-icon">🤖</div>
+          <div class="feat-title">AI Code Generation</div>
+          <div class="feat-desc">Natural language → Mistral agent via LangChain → file writes → live HMR preview. Streams every tool call via SSE.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📦</div>
+          <div class="feat-title">Isolated Sandbox Pods</div>
+          <div class="feat-desc">One Kubernetes pod per user session. Always clean. Init container seeds a fresh Vite template on every start.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🌐</div>
+          <div class="feat-title">Live Browser Preview</div>
+          <div class="feat-desc">Vite dev server proxied via wildcard subdomain routing. Every sandbox gets its own <code>&lt;id&gt;.preview.localhost</code> URL.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">💻</div>
+          <div class="feat-title">In-Browser Terminal</div>
+          <div class="feat-desc">Real bash shell via node-pty + xterm.js over WebSocket. Install packages, run scripts — all from the browser.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📁</div>
+          <div class="feat-title">File Explorer</div>
+          <div class="feat-desc">Real-time <code>/workspace</code> listing from agent API. Excludes <code>node_modules</code>, <code>.git</code>, <code>dist</code>.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">💾</div>
+          <div class="feat-title">S3 File Persistence</div>
+          <div class="feat-desc">chokidar watches workspace. Every write uploads to S3. Pod restart = workspace restored automatically.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">⏱️</div>
+          <div class="feat-title">Auto Sandbox Cleanup</div>
+          <div class="feat-desc">Redis TTL + keyspace expiry events. Idle sandboxes deleted automatically — zero manual intervention.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔐</div>
+          <div class="feat-title">Google OAuth + JWT</div>
+          <div class="feat-desc">Passport.js OAuth 2.0 flow. Short-lived JWT as httpOnly cookie. Login emails via RabbitMQ + Nodemailer.</div>
+        </div>
+      </div>
+
+      <img src="assets/demo_page_created_by_agent.png" alt="AI Demo Page" class="screenshot">
+      <p class="caption">AI agent generating a full React page from a natural language prompt</p>
+
+      <img src="assets/Demo_landing_page_creatted.png" alt="Demo Landing" class="screenshot">
+      <p class="caption">Landing page scaffold generated by AI, reflected instantly via Vite HMR</p>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section" id="architecture">
+      <h2>Architecture</h2>
+      
+      <img src="assets/main_architecture_three.png" alt="Architecture Complete" class="screenshot">
+      <p class="caption">Complete architecture with full data flow between all microservices</p>
+
+      <img src="assets/main_architecture_overview.png" alt="Architecture Overview" class="screenshot">
+      <p class="caption">Main system — MongoDB Atlas · Kubernetes Cluster · Ingress · Services · Main Pods · User Pods · Redis</p>
+
+      <img src="assets/main_architecture_overview_two.png" alt="Architecture Detail" class="screenshot">
+      <p class="caption">Kubernetes cluster internals — Ingress Controller · Services · Main pods · User pods · Router Service</p>
+
+      <h3>Main Pods — long-lived platform services</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Service</th><th>Responsibility</th></tr></thead>
+          <tbody>
+            <tr><td>auth-service</td><td>Google OAuth 2.0 flow, JWT issuance, user persistence in MongoDB</td></tr>
+            <tr><td>notification-service</td><td>RabbitMQ consumer → Nodemailer login confirmation emails via Gmail OAuth2</td></tr>
+            <tr><td>ai-orchestration</td><td>LangChain + Mistral Medium agent, streams tool call activity via SSE</td></tr>
+            <tr><td>sandbox-server</td><td>Kubernetes Pod/Service lifecycle manager, project CRUD, Redis TTL key management</td></tr>
+            <tr><td>router-service</td><td>Dynamic wildcard reverse proxy — routes <code>*.preview.localhost</code> and <code>*.agent.localhost</code> to correct pods</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- POD ARCHITECTURE -->
+    <div class="section" id="pods">
+      <h2>Pod Architecture</h2>
+
+      <img src="assets/pod_architecture.png" alt="Pod Architecture" class="screenshot">
+      <p class="caption">User pod internals — Init container · Vite dev server · Agent/sidecar · Sync agent · shared /workspace volume</p>
+
+      <h3>User Pods — ephemeral, one per sandbox session</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Container</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>init-container</td><td>Copies Vite template scaffold into shared <code>/workspace</code> emptyDir volume before main containers start</td></tr>
+            <tr><td>vite-container</td><td>Vite dev server on port 5173. Watches <code>/workspace</code>. HMR fires on every file change.</td></tr>
+            <tr><td>agent-container</td><td>Express + Socket.IO sidecar. Serves file REST API + WebSocket terminal via node-pty.</td></tr>
+            <tr><td>sync-agent</td><td>chokidar watcher → S3 uploads. On startup, downloads existing files from S3.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REQUEST FLOW -->
+    <div class="section" id="request-flow">
+      <h2>Request Flow</h2>
+      <div class="flow-box"><span class="fn">Browser</span>
+  <span class="ar">└──</span> <span class="fn">NGINX Ingress Controller</span>
+        <span class="ar">├──</span> <span class="lb">/api/auth</span>           <span class="ar">→</span> <span class="fn">auth-service</span>
+        <span class="ar">├──</span> <span class="lb">/api/sandbox</span>        <span class="ar">→</span> <span class="fn">sandbox-server</span>
+        <span class="ar">├──</span> <span class="lb">/api/ai</span>             <span class="ar">→</span> <span class="fn">ai-orchestration</span>
+        <span class="ar">└──</span> <span class="lb">*.preview.localhost</span> <span class="ar">→</span> <span class="fn">router-service</span>
+                                     <span class="ar">├──</span> <span class="fn">sandbox-svc-&lt;id&gt;:80</span>   <span class="cm">← Vite preview</span>
+                                     <span class="ar">└──</span> <span class="fn">sandbox-svc-&lt;id&gt;:3000</span> <span class="cm">← Agent / Terminal</span></div>
+
+      <div class="callout c-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">Internal Network Optimization</div>
+          <p>The AI service calls agent containers directly via internal cluster DNS (<code>http://sandbox-service-&lt;id&gt;:3000</code>) — bypassing Ingress entirely for faster file read/write operations.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SANDBOX LIFECYCLE -->
+    <div class="section" id="sandbox-lifecycle">
+      <h2>Sandbox Lifecycle</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">User opens project → POST /api/sandbox/start</div>
+            <div class="step-desc">Sandbox Server validates JWT, looks up project in MongoDB, generates a UUID for the new session.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Kubernetes resources provisioned simultaneously</div>
+            <div class="step-desc">Pod (init + vite + agent + sync-agent containers), Service (ports 80 and 3000), Redis key with 20-minute TTL.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Router refreshes TTL on every incoming request</div>
+            <div class="step-desc">Idle-timeout pattern — sandboxes remain alive as long as traffic flows. No heartbeat polling needed.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">TTL expires → Redis keyspace event fires</div>
+            <div class="step-desc">Sandbox Server receives the expiry event and automatically deletes the Kubernetes Pod and Service. Zero manual intervention.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI FLOW -->
+    <div class="section" id="ai-flow">
+      <h2>AI Agent Flow</h2>
+      <div class="flow-box"><span class="fn">User types prompt</span>
+  <span class="ar">→</span> <span class="lb">POST /api/ai/invoke</span>
+    <span class="ar">→</span> <span class="fn">LangChain + Mistral agent loop:</span>
+        <span class="ar">1.</span> <span class="lb">list_files</span>    <span class="cm">— understand project structure</span>
+        <span class="ar">2.</span> <span class="lb">read_files</span>    <span class="cm">— inspect current source files</span>
+        <span class="ar">3.</span> <span class="lb">update_files</span>  <span class="cm">— write new components, CSS, configs</span>
+    <span class="ar">→</span> Each step <span class="fn">streams to browser via SSE</span> in real time
+    <span class="ar">→</span> <span class="fn">Vite HMR</span> detects changes <span class="ar">→</span> preview refreshes instantly
+    <span class="ar">→</span> <span class="fn">sync-agent</span> uploads modified files to S3</div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="section" id="tech-stack">
+      <h2>Tech Stack</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+          <tbody>
+            <tr><td>Orchestration</td><td>Kubernetes (EKS target), eksctl, Skaffold</td></tr>
+            <tr><td>Containerization</td><td>Docker</td></tr>
+            <tr><td>AI Agent</td><td>LangChain, Mistral Medium (Mistral AI API)</td></tr>
+            <tr><td>Backend</td><td>Node.js, Express.js</td></tr>
+            <tr><td>Real-time (AI)</td><td>Server-Sent Events (SSE)</td></tr>
+            <tr><td>Real-time (Terminal)</td><td>Socket.IO WebSockets + node-pty</td></tr>
+            <tr><td>Terminal UI</td><td>xterm.js + FitAddon + WebLinksAddon</td></tr>
+            <tr><td>Frontend</td><td>React, Vite</td></tr>
+            <tr><td>Database</td><td>MongoDB Atlas</td></tr>
+            <tr><td>Cache / Lifecycle</td><td>Redis (keyspace notifications)</td></tr>
+            <tr><td>Message Queue</td><td>RabbitMQ</td></tr>
+            <tr><td>File Storage</td><td>AWS S3 + chokidar</td></tr>
+            <tr><td>Auth</td><td>Passport.js, Google OAuth 2.0, JWT (httpOnly cookie)</td></tr>
+            <tr><td>Email</td><td>Nodemailer + Gmail OAuth2</td></tr>
+            <tr><td>Ingress</td><td>NGINX Ingress Controller</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOCAL SETUP -->
+    <div class="section" id="setup">
+      <h2>Local Setup</h2>
+
+      <h3>Prerequisites</h3>
+      <ul>
+        <li>Docker Desktop with Kubernetes enabled</li>
+        <li><code>kubectl</code> and <code>skaffold</code> installed</li>
+        <li>MongoDB Atlas, Redis instance, AWS S3 bucket</li>
+        <li>Mistral AI API key + Google OAuth 2.0 credentials</li>
+      </ul>
+
+      <h3>Enable Kubernetes</h3>
+      <pre data-lang="docker desktop"><code>Settings → Kubernetes → Enable Kubernetes → Apply & Restart</code></pre>
+      <pre data-lang="bash"><code>kubectl get nodes
+# NAME             STATUS   ROLES
+# docker-desktop   Ready    control-plane</code></pre>
+
+      <h3>Configure Secrets</h3>
+      <pre data-lang="bash"><code># Edit k8s/secrets.yml with your values
+# MongoDB URI, Redis URL, JWT secret,
+# Google OAuth credentials, Mistral API key, AWS credentials</code></pre>
+
+      <h3>Run</h3>
+      <pre data-lang="bash"><code>skaffold dev</code></pre>
+
+      <img src="assets/logs_of_skaffold_dev.png" alt="Skaffold Logs" class="screenshot">
+      <p class="caption">Skaffold building images, applying manifests, watching for changes</p>
+
+      <h3>Access</h3>
+      <pre data-lang="urls"><code>http://localhost                         → Frontend
+http://&lt;sandboxId&gt;.preview.localhost    → Sandbox live preview
+http://&lt;sandboxId&gt;.agent.localhost      → Agent / terminal</code></pre>
+
+      <img src="assets/kubernetes_pod_spining.png" alt="K8s Pods" class="screenshot">
+      <p class="caption">Kubernetes pods running — main service pods + dynamically provisioned user sandbox pods</p>
+    </div>
+
+    <!-- K8S MANIFESTS -->
+    <div class="section" id="k8s">
+      <h2>Kubernetes Manifests</h2>
+      <pre data-lang="structure"><code>k8s/
+├── ai-deployment.yml
+├── ai-service.yml
+├── auth-deployment.yml
+├── auth-service.yml
+├── ingress.yml
+├── notification-deployment.yml
+├── notification-service.yml
+├── rbac.yml
+├── router-deployment.yml
+├── router-service.yml
+├── sandbox-deployment.yml
+├── sandbox-service.yml
+└── secrets.yml</code></pre>
+
+      <h3>Provision EKS Cluster</h3>
+      <pre data-lang="bash"><code>eksctl create cluster \
+  --name forgebox \
+  --region ap-south-1 \
+  --nodegroup-name express-nodes \
+  --node-type t3.medium \
+  --nodes 2 --nodes-min 1 --nodes-max 3 \
+  --managed</code></pre>
+
+      <h3>Deploy</h3>
+      <pre data-lang="bash"><code>kubectl apply -f k8s/
+kubectl get pods
+kubectl get services</code></pre>
+    </div>
+
+    <!-- S3 -->
+    <div class="section" id="s3">
+      <h2>File Persistence</h2>
+      <p>The sync-agent container uses <code>chokidar</code> to watch <code>/workspace</code>. Every file write uploads to S3 under a key prefixed by project ID. On pod startup, the sync-agent downloads all existing files — workspaces survive pod destruction completely.</p>
+      <img src="assets/S3_bucket_image.png" alt="S3 Bucket" class="screenshot">
+      <p class="caption">AWS S3 bucket — project workspaces persisted by project ID prefix, restored on every pod start</p>
+    </div>
+
+    <!-- DEPLOYMENT STATUS -->
+    <div class="section" id="deployment">
+      <h2>Deployment Status</h2>
+
+      <div class="callout c-ok">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <div class="callout-title">Local Kubernetes — Fully Operational</div>
+          <p>All services running on Docker Desktop Kubernetes. Dynamic pod provisioning, wildcard ingress, Redis TTL lifecycle, S3 sync, AI streaming, and in-browser terminal all validated locally.</p>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <h3>⚠️ AWS EKS Cloud Deployment — Pending</h3>
+        <p>This project requires real Kubernetes — dynamic pod provisioning, wildcard ingress, and init container workspace seeding cannot run on any PaaS. EKS was the target. A full day of debugging hit three separate blockers:</p>
+        <ul class="deploy-list">
+          <li>
+            <span>❌</span>
+            <div>
+              <div class="dl-cause">AWS Educate account — platform-level EC2 block</div>
+              <div class="dl-fix">IAM correct. vCPU quota showed 8. CloudFormation deployed fine. Managed nodegroup nodes never launched — zero EC2 instances, silent failure. Educate accounts block EKS managed nodegroups at platform level. Not documented anywhere.</div>
+            </div>
+          </li>
+          <li>
+            <span>❌</span>
+            <div>
+              <div class="dl-cause">New personal account — silent 24-48hr EC2 verification period</div>
+              <div class="dl-fix">Same timeout with 16 vCPU quota confirmed, correct IAM, t3.medium available across all 3 AZs in both ap-south-1 and ap-south-2. New AWS accounts have a silent EC2 verification window before instances can launch.</div>
+            </div>
+          </li>
+          <li>
+            <span>❌</span>
+            <div>
+              <div class="dl-cause">RBI e-mandate + Bank of Baroda international transaction block</div>
+              <div class="dl-fix">AWS bills in USD. RBI mandates explicit OTP e-mandate for recurring international charges. BOB debit card dropped the authorization before the handshake completed. AWS showed a generic payment error with no specific reason.</div>
+            </div>
+          </li>
+        </ul>
+        <p style="margin-top:1rem; font-size:0.83rem; color:#92400e;">Kubernetes manifests are production-ready. EKS deployment goes live once account verification completes.</p>
+      </div>
+    </div>
+
+    <!-- DESIGN DECISIONS -->
+    <div class="section" id="decisions">
+      <h2>Key Design Decisions</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Decision</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td>Ephemeral pods per user</td><td>Clean environments every session. Eliminates shared-state bugs. Enables spot/preemptible node usage.</td></tr>
+            <tr><td>Init container for workspace</td><td>Immutable starting point per session. Template updated independently of runtime containers.</td></tr>
+            <tr><td>Redis TTL for lifecycle</td><td>No batch jobs. Delegates to Redis built-in keyspace notifications — reliable and low-latency.</td></tr>
+            <tr><td>SSE for AI streaming</td><td>Simpler than WebSockets for unidirectional streaming. Standard HTTP, no upgrade negotiation.</td></tr>
+            <tr><td>Socket.IO for terminal</td><td>Full-duplex required for interactive PTY. WebSockets are the only appropriate transport.</td></tr>
+            <tr><td>AI via internal cluster DNS</td><td>Bypasses Ingress entirely. Significantly faster file read/write for the agent loop.</td></tr>
+            <tr><td>S3 for file persistence</td><td>Decouples user work from compute lifecycle. Pod destroyed and recreated without file loss.</td></tr>
+            <tr><td>RabbitMQ for notifications</td><td>Email failures isolated from auth critical path. Durable queue — no silent drops.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SCALABILITY -->
+    <div class="section" id="scalability">
+      <h2>Scalability &amp; Reliability</h2>
+      <p>All main-tier services are stateless (state externalized to Redis, MongoDB, S3) and horizontally scalable by increasing Deployment replica counts.</p>
+      <ul>
+        <li><strong>Health checks</strong> — All Deployments define <code>livenessProbe</code> and <code>readinessProbe</code> HTTP endpoints</li>
+        <li><strong>Resource limits</strong> — Pod resource requests and limits defined. No sandbox can exhaust node resources.</li>
+        <li><strong>Session affinity</strong> — Cookie-based affinity for multi-replica Router deployments.</li>
+        <li><strong>Full isolation</strong> — No user's sandbox can affect another's. Separate network namespace, volume, and resource allocation per pod.</li>
+      </ul>
+      <div class="callout c-info">
+        <span class="callout-icon">🏗️</span>
+        <div class="callout-body">
+          <div class="callout-title">Production-Grade Design</div>
+          <p>Ephemeral pods + S3 persistence + Redis TTL + RabbitMQ async notifications produce a system that is resource-efficient, operationally observable, inherently isolated, and capable of serving many concurrent users without interference.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
