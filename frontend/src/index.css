@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* ── ForgeBox Obsidian Design System ───────────────────────────────────────── */
+:root {
+  /* Backgrounds — layered depth through subtle value shifts */
+  --bg-primary:    #08080f;   /* deepest layer */
+  --bg-secondary:  #0d0d1a;   /* panels */
+  --bg-elevated:   #141428;   /* cards, inputs */
+  --bg-surface:    #1a1a35;   /* modals */
+  --bg-hover:      #1e1e3a;   /* interactive hover */
+
+  /* Borders — ultra-thin, purpose-built */
+  --border-subtle:  rgba(255,255,255,0.05);
+  --border-default: rgba(255,255,255,0.09);
+  --border-active:  rgba(124,58,237,0.45);
+
+  /* Brand accent — Violet */
+  --accent:         #7C3AED;
+  --accent-dim:     rgba(124,58,237,0.12);
+  --accent-glow:    rgba(124,58,237,0.25);
+
+  /* Secondary accent — Sky */
+  --sky:            #0EA5E9;
+  --sky-dim:        rgba(14,165,233,0.12);
+
+  /* Status colors */
+  --green:          #10B981;
+  --green-dim:      rgba(16,185,129,0.12);
+  --amber:          #F59E0B;
+  --red:            #EF4444;
+
+  /* Text hierarchy */
+  --text-primary:   #F1F0FF;
+  --text-secondary: rgba(241,240,255,0.6);
+  --text-muted:     rgba(241,240,255,0.35);
+  --text-faint:     rgba(241,240,255,0.2);
+
+  /* Legacy aliases (keeps existing components working) */
+  --bg-hover: #1e1e3a;
+  --accent-blue:       var(--accent);
+  --accent-blue-light: #a78bfa;
+  --accent-blue-glow:  var(--accent-glow);
+  --accent-green:      var(--green);
+  --accent-green-glow: var(--green-dim);
+  --accent-amber:      var(--amber);
+  --accent-red:        var(--red);
+  --text-accent:       #a78bfa;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+/* ── Xterm overrides ────────────────────────────────────────────────────────── */
+.xterm { padding: 10px; height: 100%; }
+.xterm-viewport { background: transparent !important; }
+.xterm-screen  { background: transparent !important; }
+
+/* ── Typography helpers ─────────────────────────────────────────────────────── */
+.font-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+/* ── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulseDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1);   opacity: 1;   }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50%      { box-shadow: 0 0 0 4px var(--accent-glow); }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes liveDot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+.animate-fade-in       { animation: fadeIn 0.2s ease forwards; }
+.animate-fade-in-left  { animation: fadeInLeft 0.2s ease forwards; }
+.animate-fade-in-right { animation: fadeInRight 0.2s ease forwards; }
+.animate-float         { animation: float 4s ease-in-out infinite; }
+.animate-spin-slow     { animation: spinSlow 0.75s linear infinite; }
+.animate-pulse-glow    { animation: pulseGlow 2s ease-in-out infinite; }
+
+/* ── Typing indicator ───────────────────────────────────────────────────────── */
+.typing-dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulseDot 1.4s ease infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* ── Skeleton shimmer ───────────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--bg-elevated) 25%,
+    var(--bg-hover)    50%,
+    var(--bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* ── Status badge ───────────────────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.idle     { background: var(--text-muted); }
+.status-dot.creating { background: var(--amber); animation: pulseDot 1s ease infinite; }
+.status-dot.ready    { background: var(--green); animation: liveDot 2s ease-in-out infinite; }
+
+/* ── Panel labels ───────────────────────────────────────────────────────────── */
+.panel-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+}
+.btn-primary:hover { filter: brightness(1.12); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; filter: none; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 400;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-ghost:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+
+/* ── Chat messages ──────────────────────────────────────────────────────────── */
+.chat-msg-user {
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.22);
+  border-radius: 12px 12px 3px 12px;
+}
+.chat-msg-ai {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px 12px 12px 12px;
+}
+
+/* ── SSE stream lines ───────────────────────────────────────────────────────── */
+.stream-line { animation: fadeIn 0.25s ease forwards; }
+
+/* ── Scrollable ─────────────────────────────────────────────────────────────── */
+.scroll-y { overflow-y: auto; overflow-x: hidden; }
+
+/* ── Resize handle ──────────────────────────────────────────────────────────── */
+.resize-handle { background: var(--border-subtle); transition: background 0.15s; }
+.resize-handle:hover { background: var(--accent); }
+
+/* ── Project card hover ─────────────────────────────────────────────────────── */
+.project-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+}
+.project-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 0.15s ease;
+}
+.project-card:hover::before { transform: scaleY(1); }
+
+/* ── Tab bar ────────────────────────────────────────────────────────────────── */
+.tab-active-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* ── Dot grid background (landing hero) ─────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── Glow indicator dot ─────────────────────────────────────────────────────── */
+.glow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow), 0 0 14px var(--accent-glow);
+  animation: liveDot 2.5s ease-in-out infinite;
+}
+.glow-dot.green {
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green-dim), 0 0 14px var(--green-dim);
+}
