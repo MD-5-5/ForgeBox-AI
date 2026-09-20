@@ -1092,9 +1092,9 @@
 			"typeName": "shape"
 		},
 		{
-			"x": 6748.104508904138,
-			"y": 4768.182777702283,
-			"z": 0.07682739331504855,
+			"x": 9937.47870374952,
+			"y": 4108.615470367465,
+			"z": 0.05,
 			"meta": {},
 			"id": "camera:page:page",
 			"typeName": "camera"
@@ -2839,7 +2839,7 @@
 			"props": {
 				"color": "black",
 				"size": "m",
-				"w": 151.05209350585938,
+				"w": 416.1138794852005,
 				"font": "draw",
 				"textAlign": "start",
 				"autoSize": true,
@@ -2858,7 +2858,7 @@
 							"content": [
 								{
 									"type": "text",
-									"text": "ws/socker.io"
+									"text": "ws/sockert.io"
 								}
 							]
 						}
@@ -4276,6 +4276,14 @@
 			"typeName": "binding"
 		},
 		{
+			"name": "",
+			"color": "#FF802B",
+			"imageUrl": "",
+			"meta": {},
+			"id": "user:49NNVAOtEr3GZ9KgvH-0f",
+			"typeName": "user"
+		},
+		{
 			"id": "asset:-2106197910",
 			"type": "image",
 			"typeName": "asset",
@@ -4348,8 +4356,8 @@
 			"typeName": "user"
 		},
 		{
-			"x": -777.6073767531443,
-			"y": -978.4771670194381,
+			"x": -775.523762732194,
+			"y": -970.142615553901,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -6848,7 +6856,7 @@
 			"screenBounds": {
 				"x": 0,
 				"y": 0,
-				"w": 1232,
+				"w": 932,
 				"h": 605.3333740234375
 			},
 			"insets": [
@@ -7109,8 +7117,8 @@
 			"typeName": "shape"
 		},
 		{
-			"x": -2229.0032769243653,
-			"y": -1021.4703779047314,
+			"x": -2294.113269941136,
+			"y": -1087.850218255912,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -7124,7 +7132,7 @@
 				"font": "draw",
 				"textAlign": "start",
 				"autoSize": true,
-				"scale": 2.114561354646585,
+				"scale": 2.1532729986411945,
 				"richText": {
 					"type": "doc",
 					"attrs": {
@@ -7235,6 +7243,14 @@
 			"parentId": "page:page",
 			"index": "b0zzbMQ2O",
 			"typeName": "shape"
+		},
+		{
+			"name": "",
+			"color": "#FF802B",
+			"imageUrl": "",
+			"meta": {},
+			"id": "user:8zgdWtG1HnKD4LhO2dLcx",
+			"typeName": "user"
 		},
 		{
 			"x": 161.67560730757373,
@@ -7613,8 +7629,8 @@
 			"typeName": "shape"
 		},
 		{
-			"x": -2314.5820122575824,
-			"y": -1037.6857428778721,
+			"x": -2358.33857436969,
+			"y": -1108.529716480145,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -7622,8 +7638,8 @@
 			"id": "shape:d6T6hHTMBq72KJO4F4umw",
 			"type": "geo",
 			"props": {
-				"w": 709.8565481765523,
-				"h": 113.81667315863642,
+				"w": 722.852015969373,
+				"h": 115.90033487045483,
 				"geo": "rectangle",
 				"dash": "draw",
 				"growY": 0,
